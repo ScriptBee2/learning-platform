@@ -181,25 +181,20 @@ ol.formula-list .formula-list__label::before { content: counter(fl) ". "; color:
   white-space: nowrap;
 }
 
-/* ---------- Übungsaufgaben: Lösungsweg ---------- */
-.ueb-solution { margin-top: var(--sp-4); }
-.ueb-solution__toggle {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
-  padding: var(--sp-2) var(--sp-3);
-  border: 1px solid var(--border-strong);
-  border-radius: var(--r-sm);
-  background: transparent;
-  color: var(--text-muted);
+/* ---------- Übungsaufgaben: Tipp ---------- */
+.ueb-tipp { margin-top: var(--sp-4); }
+.ueb-tipp__body {
+  margin-top: var(--sp-2);
+  padding: var(--sp-3) var(--sp-4);
+  background: color-mix(in srgb, var(--yellow) 10%, var(--surface));
+  border-left: 3px solid var(--yellow);
+  border-radius: 0 var(--r-sm) var(--r-sm) 0;
   font-size: var(--fs-sm);
-  cursor: pointer;
-  transition: background var(--t-fast), color var(--t-fast);
-  width: 100%;
-  text-align: left;
+  color: var(--text);
+  line-height: var(--lh-relaxed);
 }
-.ueb-solution__toggle:hover { background: var(--surface-hover); color: var(--text); }
-.ueb-solution__toggle[aria-expanded="true"] { color: var(--accent); border-color: var(--accent); }
+
+/* ---------- Übungsaufgaben: Lösungsweg-Steps (im hint-panel) ---------- */
 .ueb-solution__steps {
   list-style: none;
   counter-reset: sol;

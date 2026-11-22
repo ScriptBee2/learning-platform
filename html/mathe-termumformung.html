@@ -25,18 +25,15 @@
     <div class="sidebar__content">
       <section class="panel">
         <h2 class="panel__title">Lernkarten</h2>
-        <p class="panel__hint">Karte antippen zum Öffnen.</p>
         <div class="card-stack" id="cards"></div>
       </section>
       <section class="panel accent-amber">
         <h2 class="panel__title">Gemischtes Quiz</h2>
-        <p class="panel__hint">Alle Themen gemischt, 10 Fragen.</p>
         <button type="button" class="btn btn--primary btn--block" id="quizBtn">Quiz starten</button>
       </section>
       <section class="panel accent-blue">
         <h2 class="panel__title">Übungsaufgaben</h2>
         <div class="ueb-filter">
-          <label class="ueb-filter__label" for="uebTopic">Thema</label>
           <select class="ueb-filter__select" id="uebTopic">
             <option value="">Alle Themen</option>
             <option value="ausklammern">Ausklammern</option>
@@ -45,7 +42,6 @@
             <option value="bruchterme">Bruchterme</option>
             <option value="wurzeln-vereinfachen">Wurzeln vereinfachen</option>
           </select>
-          <label class="ueb-filter__label">Schwierigkeit</label>
           <div class="ueb-level" role="group" aria-label="Schwierigkeitsgrad">
             <button type="button" class="ueb-level__btn is-active" data-level="easy">Einfach</button>
             <button type="button" class="ueb-level__btn" data-level="medium">Mittel</button>
@@ -119,30 +115,42 @@
 
   <!-- Übungsaufgaben-Overlay -->
   <div class="overlay" id="uebOverlay" hidden>
-    <div class="dialog quiz" id="uebBox" role="dialog" aria-modal="true" aria-labelledby="uebLead">
-      <button type="button" class="close" id="uebClose" aria-label="Schließen">&times;</button>
-      <div class="quiz__bar">
-        <p class="quiz__counter" id="uebCounter"></p>
-        <span class="ueb-level-chip" id="uebLevelChip"></span>
-      </div>
-      <div id="uebStage">
-        <p class="quiz__lead" id="uebLead"></p>
-        <p class="quiz__prompt" id="uebPrompt"></p>
-        <div class="quiz__options" id="uebOptions"></div>
-        <p class="quiz__feedback" id="uebFeedback" aria-live="polite"></p>
-        <div class="ueb-solution" id="uebSolution" hidden>
-          <button type="button" class="ueb-solution__toggle" id="uebSolutionBtn" aria-expanded="false">
-            Lösungsweg anzeigen ▾
-          </button>
-          <ol class="ueb-solution__steps" id="uebSolutionSteps" hidden></ol>
+    <div class="quiz-layout" id="uebLayout">
+      <div class="dialog quiz" id="uebBox" role="dialog" aria-modal="true" aria-labelledby="uebLead">
+        <button type="button" class="close" id="uebClose" aria-label="Schließen">&times;</button>
+        <div class="quiz__bar">
+          <p class="quiz__counter" id="uebCounter"></p>
+          <button type="button" class="btn btn--sm quiz__hint-btn" id="uebSolutionBtn" aria-expanded="false" aria-controls="uebSolutionPanel">&#128221; Lösungsweg</button>
         </div>
-        <button type="button" class="btn btn--primary btn--block quiz__next" id="uebNext" hidden></button>
+        <div id="uebStage">
+          <p class="quiz__lead" id="uebLead"></p>
+          <p class="quiz__prompt" id="uebPrompt" tabindex="-1"></p>
+          <div class="ueb-tipp">
+            <button type="button" class="btn btn--sm quiz__hint-btn" id="uebTippBtn" aria-expanded="false">&#128161; Tipp</button>
+            <p class="ueb-tipp__body" id="uebTippBody" hidden></p>
+          </div>
+          <button type="button" class="btn btn--primary btn--block quiz__next" id="uebNext" hidden></button>
+        </div>
+        <div class="quiz__result" id="uebResult" hidden>
+          <div id="uebHamsterContainer"></div>
+          <p class="quiz__score" id="uebScore"></p>
+          <button type="button" class="btn btn--primary btn--block" id="uebRestart">Nochmal</button>
+        </div>
       </div>
-      <div class="quiz__result" id="uebResult" hidden>
-        <div id="uebHamsterContainer"></div>
-        <p class="quiz__score" id="uebScore"></p>
-        <button type="button" class="btn btn--primary btn--block" id="uebRestart">Nochmal</button>
-      </div>
+
+      <!-- Lösungsweg-Panel neben dem Dialog -->
+      <aside class="dialog hint-panel" id="uebSolutionPanel" aria-label="Lösungsweg" hidden>
+        <button type="button" class="close" id="uebSolutionClose" aria-label="Panel schließen">&times;</button>
+        <div class="hint-panel__head">
+          <div>
+            <span class="eyebrow hint-panel__eyebrow">Lösungsweg</span>
+            <h3 class="hint-panel__title">Schritt für Schritt</h3>
+          </div>
+        </div>
+        <div class="hint-panel__show">
+          <ol class="ueb-solution__steps" id="uebSolutionSteps"></ol>
+        </div>
+      </aside>
     </div>
   </div>
 
