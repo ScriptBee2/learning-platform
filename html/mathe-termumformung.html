@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="../css/base.css">
   <link rel="stylesheet" href="../lib/hamster/hamster.css">
   <link rel="stylesheet" href="../css/grundlagen.css">
+  <link rel="stylesheet" href="../css/explainer.css">
 </head>
 <body class="page page--scroll page--with-sidebar">
   <a class="back" href="mathe.html">&#8592; Zurück</a>
@@ -115,42 +116,50 @@
 
   <!-- Übungsaufgaben-Overlay -->
   <div class="overlay" id="uebOverlay" hidden>
-    <div class="quiz-layout" id="uebLayout">
-      <div class="dialog quiz" id="uebBox" role="dialog" aria-modal="true" aria-labelledby="uebLead">
-        <button type="button" class="close" id="uebClose" aria-label="Schließen">&times;</button>
-        <div class="quiz__bar">
-          <p class="quiz__counter" id="uebCounter"></p>
-          <button type="button" class="btn btn--sm quiz__hint-btn" id="uebSolutionBtn" aria-expanded="false" aria-controls="uebSolutionPanel">&#128221; Lösungsweg</button>
+    <div class="dialog quiz" id="uebBox" role="dialog" aria-modal="true" aria-labelledby="uebLead">
+      <button type="button" class="close" id="uebClose" aria-label="Schließen">&times;</button>
+      <div class="quiz__bar">
+        <p class="quiz__counter" id="uebCounter"></p>
+      </div>
+      <!-- View 1: Aufgabe -->
+      <div id="uebStage">
+        <p class="quiz__lead" id="uebLead"></p>
+        <p class="eyebrow ueb-type" id="uebType" hidden></p>
+        <p class="quiz__prompt" id="uebPrompt" tabindex="-1"></p>
+        <div class="ueb-tipp">
+          <button type="button" class="btn btn--sm quiz__hint-btn" id="uebTippBtn" aria-expanded="false">&#128161; Tipp</button>
+          <p class="ueb-tipp__body" id="uebTippBody" hidden></p>
         </div>
-        <div id="uebStage">
-          <p class="quiz__lead" id="uebLead"></p>
-          <p class="quiz__prompt" id="uebPrompt" tabindex="-1"></p>
-          <div class="ueb-tipp">
-            <button type="button" class="btn btn--sm quiz__hint-btn" id="uebTippBtn" aria-expanded="false">&#128161; Tipp</button>
-            <p class="ueb-tipp__body" id="uebTippBody" hidden></p>
-          </div>
+        <div class="ueb-actions">
+          <button type="button" class="btn btn--block" id="uebSolutionBtn">Lösungsweg anzeigen</button>
           <button type="button" class="btn btn--primary btn--block quiz__next" id="uebNext" hidden></button>
         </div>
-        <div class="quiz__result" id="uebResult" hidden>
-          <div id="uebHamsterContainer"></div>
-          <p class="quiz__score" id="uebScore"></p>
-          <button type="button" class="btn btn--primary btn--block" id="uebRestart">Nochmal</button>
-        </div>
       </div>
-
-      <!-- Lösungsweg-Panel neben dem Dialog -->
-      <aside class="dialog hint-panel" id="uebSolutionPanel" aria-label="Lösungsweg" hidden>
-        <button type="button" class="close" id="uebSolutionClose" aria-label="Panel schließen">&times;</button>
-        <div class="hint-panel__head">
-          <div>
-            <span class="eyebrow hint-panel__eyebrow">Lösungsweg</span>
-            <h3 class="hint-panel__title">Schritt für Schritt</h3>
+      <!-- View 2: Lösungsweg – Schritt-für-Schritt-Stepper -->
+      <div id="uebSolutionStage" hidden>
+        <div class="expl-card">
+          <div class="expl-card__head">
+            <div class="expl-narrator" id="uebHamster"></div>
+            <div>
+              <span class="eyebrow expl-card__step" id="uebStepNo"></span>
+              <h3 class="expl-card__title" id="uebStepTitle"></h3>
+            </div>
+          </div>
+          <div class="ueb-step-prompt" id="uebStepPrompt"></div>
+          <div class="expl-steps" id="uebStepContent"></div>
+          <div class="expl-nav">
+            <button type="button" class="btn" id="uebStepPrev" disabled>&#8592;</button>
+            <div class="expl-dots" id="uebStepDots" aria-hidden="true"></div>
+            <button type="button" class="btn btn--primary" id="uebStepNext">&#8594;</button>
           </div>
         </div>
-        <div class="hint-panel__show">
-          <ol class="ueb-solution__steps" id="uebSolutionSteps"></ol>
-        </div>
-      </aside>
+        <button type="button" class="btn btn--block ueb-back" id="uebBackBtn">&#8592; Zurück zur Aufgabe</button>
+      </div>
+      <div class="quiz__result" id="uebResult" hidden>
+        <div id="uebHamsterContainer"></div>
+        <p class="quiz__score" id="uebScore"></p>
+        <button type="button" class="btn btn--primary btn--block" id="uebRestart">Nochmal</button>
+      </div>
     </div>
   </div>
 

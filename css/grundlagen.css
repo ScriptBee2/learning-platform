@@ -194,37 +194,43 @@ ol.formula-list .formula-list__label::before { content: counter(fl) ". "; color:
   line-height: var(--lh-relaxed);
 }
 
-/* ---------- Übungsaufgaben: Lösungsweg-Steps (im hint-panel) ---------- */
-.ueb-solution__steps {
-  list-style: none;
-  counter-reset: sol;
+/* ---------- Übungsaufgaben: Button-Gruppe + Zurück ---------- */
+.ueb-actions { display: flex; flex-direction: column; gap: var(--sp-2); margin-top: var(--sp-5); }
+.ueb-back { margin-top: var(--sp-4); }
+
+/* Regel-Box im Lösungsweg-Stepper */
+.ueb-rule-box {
   display: flex;
-  flex-direction: column;
-  gap: 0;
-  margin-top: var(--sp-3);
+  justify-content: center;
   padding: var(--sp-3) var(--sp-4);
-  background: var(--surface-sunken);
-  border-radius: var(--r-md);
+  margin-bottom: var(--sp-3);
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  border-radius: var(--r-sm);
+}
+/* Lösungsweg-Stepper: expl-steps ohne flex-grow, damit der Dialog die Contenthöhe nutzt */
+#uebSolutionStage .expl-steps { flex: none; overflow-y: visible; }
+/* Dots immer zeigen (Container-Query greift wegen Padding auf content-box) */
+#uebSolutionStage .expl-dots { display: flex; }
+/* Schritttitel nicht fett */
+#uebSolutionStage .expl-card__title { font-weight: 400; font-size: var(--fs-lg); }
+/* Formel-Step: zentriert, großzügig Luft */
+.ueb-step-formula { display: flex; justify-content: center; padding: var(--sp-4) 0; }
+/* Erklärungstext im Lösungsweg */
+.ueb-step-explain { font-size: var(--fs-sm); line-height: var(--lh-relaxed); margin-bottom: var(--sp-2); }
+.ueb-step-explain b { color: var(--accent); }
+.ueb-step-explain .hl-b { color: var(--blue); font-weight: 700; }
+.ueb-step-explain .hl-muted { color: var(--text-muted); }
+/* Aufgabentyp-Eyebrow über der Aufgabe */
+.ueb-type { margin-bottom: var(--sp-1); color: var(--accent); }
+/* Originalaufgabe als Kontext im Lösungsweg-Stepper */
+.ueb-step-prompt {
+  padding: var(--sp-2) var(--sp-3);
+  margin-bottom: var(--sp-3);
+  background: var(--surface);
   border-left: 3px solid var(--accent);
-}
-.ueb-solution__steps li {
-  counter-increment: sol;
-  display: flex;
-  align-items: baseline;
-  gap: var(--sp-3);
-  padding: var(--sp-2) 0;
-  border-bottom: 1px solid var(--border);
-}
-.ueb-solution__steps li:last-child { border-bottom: 0; }
-.ueb-solution__steps li::before {
-  content: counter(sol);
-  flex: 0 0 1.4rem;
-  height: 1.4rem;
-  border-radius: 50%;
-  background: color-mix(in srgb, var(--accent) 30%, transparent);
-  color: var(--text-strong);
-  font-size: var(--fs-xs);
-  font-weight: 700;
-  line-height: 1.4rem;
+  border-radius: 0 var(--r-sm) var(--r-sm) 0;
+  font-size: 0.95rem;
   text-align: center;
+  overflow-x: auto;
 }
