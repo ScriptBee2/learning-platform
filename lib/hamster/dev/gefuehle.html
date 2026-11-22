@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hamster – Gefühle</title>
+  <style>
+    :root {
+      --bg: #0f172a; --bg-soft: #1e293b; --line: #334155;
+      --text: #e2e8f0; --text-dim: #94a3b8; --accent: #22d3ee;
+    }
+    body.light {
+      --bg: #f1f5f9; --bg-soft: #ffffff; --line: #cbd5e1;
+      --text: #0f172a; --text-dim: #64748b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; padding: 1.5rem clamp(1rem, 4vw, 3rem) 3rem;
+      background: var(--bg); color: var(--text);
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    header { display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem 1.5rem; margin-bottom: 1rem; }
+    h1 { margin: 0; font-size: 1.6rem; }
+    .lead { color: var(--text-dim); margin: 0 0 1rem; max-width: 60ch; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: .6rem; margin-bottom: 1.2rem; }
+    .btn {
+      font: inherit; font-size: .9rem; font-weight: 600; padding: .45rem .9rem; border-radius: 10px; cursor: pointer;
+      background: var(--bg-soft); color: var(--text); border: 1px solid var(--line);
+    }
+    .btn:hover { border-color: var(--accent); }
+    .btn[aria-pressed="true"] { background: var(--accent); color: #0f172a; border-color: var(--accent); }
+    .seg { display: inline-flex; }
+    .seg .btn { border-radius: 0; }
+    .seg .btn:first-child { border-radius: 10px 0 0 10px; }
+    .seg .btn:last-child { border-radius: 0 10px 10px 0; }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 1rem; }
+    .card {
+      background: var(--bg-soft); border: 1px solid var(--line); border-radius: 16px;
+      padding: .9rem 1rem 1rem;
+    }
+    .card__no { font-size: .75rem; font-weight: 800; color: var(--accent); letter-spacing: .05em; }
+    .card__name { font-weight: 700; margin-top: .1rem; }
+    .card__desc { font-size: .82rem; color: var(--text-dim); margin-top: .15rem; min-height: 2.4em; }
+    .card svg { display: block; width: 100%; max-width: 220px; aspect-ratio: 1; margin: .4rem auto 0; overflow: visible; }
+
+    /* Umriss-Ansicht: nur die Silhouette, um die Form ohne Gesicht zu beurteilen */
+    .sil .face, .sil .belly, .sil .paws { display: none; }
+    .sil .part { fill: var(--text) !important; stroke: none !important; }
+    .sil .shadow { opacity: .15; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Hamster – Gefühle</h1>
+    <a href="animationen.html">&#8592; zu den Animationen</a>
+  </header>
+  <p class="lead">Form 8 („Pausbacken · voll“, kleine Schnauze) in verschiedenen Gefühlen, mit den Armen aus dem animierten Hamster. Alles statisch, ohne Animation.
+    „Nur Umriss“ zeigt die reine Silhouette, so lässt sich die Form am besten vergleichen.</p>
+
+  <div class="toolbar">
+    <span class="seg" id="armStyle" role="group" aria-label="Arm-Stil">
+      <button type="button" class="btn" data-style="illu" aria-pressed="true">Arme: Illustration</button>
+      <button type="button" class="btn" data-style="weich" aria-pressed="false">Weich</button>
+      <button type="button" class="btn" data-style="kontur" aria-pressed="false">Kontur (bisher)</button>
+    </span>
+    <button type="button" class="btn" id="sil" aria-pressed="false">Nur Umriss</button>
+    <button type="button" class="btn" id="theme" aria-pressed="false">Heller Hintergrund</button>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <script>
+    (function () {
+      const LINE = "#74391a";
+      const OUT = 'stroke="' + LINE + '" stroke-width="2.6" stroke-linejoin="round"';
+
+      // ---- Fell-Generator ----
+      // Läuft am Umriss entlang und setzt in den angegebenen Abschnitten (Anteil 0…1 der
+      // Umrisslänge, 0 = Startpunkt des Pfads, im Uhrzeigersinn) Fell-Wölkchen ("fluff")
+      // oder spitze Büschel ("tuft"). Alle Pfade laufen im Uhrzeigersinn ab dem Scheitel.
+      const NS = "http://www.w3.org/2000/svg";
+      const meas = document.createElementNS(NS, "svg");
+      meas.setAttribute("width", "0"); meas.setAttribute("height", "0");
+      meas.style.position = "absolute";
+      document.body.appendChild(meas);
+      const mp = document.createElementNS(NS, "path");
+      meas.appendChild(mp);
+      function rnd(seed) { const x = Math.sin(seed * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
+      function r1(v) { return Math.round(v * 10) / 10; }
+
+      function fur(d, regions, seed) {
+        if (!regions || !regions.length) return d;
+        mp.setAttribute("d", d);
+        const L = mp.getTotalLength();
+        function off(s, k) {
+          s = Math.max(0, Math.min(L, s));
+          const p = mp.getPointAtLength(s);
+          const a = mp.getPointAtLength(Math.min(L, s + 0.6)), b = mp.getPointAtLength(Math.max(0, s - 0.6));
+          let tx = a.x - b.x, ty = a.y - b.y;
+          const l = Math.hypot(tx, ty) || 1;
+          return [p.x + ty / l * k, p.y - tx / l * k];
+        }
+        function P(pt) { return r1(pt[0]) + " " + r1(pt[1]); }
+        const R = regions.map(function (r) { return { s0: r.from * L, s1: r.to * L, r: r }; })
+          .sort(function (x, y) { return x.s0 - y.s0; });
+        let out = "M" + P(off(0, 0)), s = 0, ri = 0, k = 0;
+        while (s < L - 0.01) {
+          const reg = R[ri];
+          if (reg && s >= reg.s0 - 0.01) {
+            const r = reg.r;
+            // ungleich breite Büschel: Gewichte 0.6…1.4
+            const ws = [];
+            for (let j = 0; j < r.n; j++) {
+              const tj = (j + 0.5) / r.n;
+              ws.push((0.6 + 0.8 * rnd(seed * 17 + j * 3 + ri)) * (r.style === "flick" ? 0.55 + 0.45 * Math.sin(Math.PI * tj) : 1));
+            }
+            const wsum = ws.reduce(function (x, y) { return x + y; }, 0);
+            let a = reg.s0;
+            for (let j = 0; j < r.n; j++) {
+              const w = (reg.s1 - reg.s0) * ws[j] / wsum;
+              const b = a + w, ts = a + (0.5 + (r.sweep || 0)) * w;
+              // Hüllkurve: am Rand der Gruppe winzig, in der Mitte voll → weicher Übergang zur glatten Kontur
+              const env = Math.pow(Math.sin(Math.PI * ((a + w / 2 - reg.s0) / (reg.s1 - reg.s0))), 0.9);
+              const A = r.amp * (r.style === "flick" ? (0.15 + 0.85 * env) * (0.75 + 0.25 * rnd(seed * 13 + k)) : 0.65 + 0.35 * rnd(seed * 13 + k)); k++;
+              if (r.style === "flick") {
+                // gebogenes Dreieck: lange, leicht gewölbte Kante + kurze Rückkante,
+                // die Spitze hängt in Fellrichtung über (dir +1 = in Laufrichtung, -1 = entgegen)
+                const dir = r.dir || 0, lean = 0.5, jit = (rnd(seed * 7 + k) - 0.5) * 0.2;
+                if (dir > 0) {
+                  const tip = off(b + w * (lean + jit), A);
+                  out += "Q" + P(off(a + w * 0.75, A * 0.85)) + " " + P(tip) +
+                         "Q" + P(off(b + w * 0.02, A * 0.12)) + " " + P(off(b, 0));
+                } else if (dir < 0) {
+                  const tip = off(a - w * (lean + jit), A);
+                  out += "Q" + P(off(a - w * 0.02, A * 0.12)) + " " + P(tip) +
+                         "Q" + P(off(a + w * 0.25, A * 0.85)) + " " + P(off(b, 0));
+                } else {
+                  const tip = off(a + w * (0.5 + jit), A);
+                  out += "Q" + P(off(a + w * 0.2, A * 0.55)) + " " + P(tip) +
+                         "Q" + P(off(b - w * 0.2, A * 0.55)) + " " + P(off(b, 0));
+                }
+              } else if (r.style === "tuft") {
+                out += "Q" + P(off((a + ts) / 2, A * 0.15)) + " " + P(off(ts, A)) +
+                       "Q" + P(off((ts + b) / 2, A * 0.15)) + " " + P(off(b, -0.3));
+              } else {
+                out += "Q" + P(off(ts, A * 2)) + " " + P(off(b, 0));
+              }
+              a = b;
+            }
+            s = reg.s1; ri++;
+            continue;
+          }
+          s = Math.min(L, s + 2.5, reg ? reg.s0 : L);
+          out += "L" + P(off(s, 0));
+        }
+        return out + "Z";
+      }
+      // Feine Haarstriche knapp innerhalb des Umrisses, in Fellrichtung (dir) geschwungen
+      function hairs(d, regions, seed) {
+        if (!regions || !regions.length) return "";
+        mp.setAttribute("d", d);
+        const L = mp.getTotalLength();
+        function off(s, k) {
+          s = Math.max(0, Math.min(L, s));
+          const p = mp.getPointAtLength(s);
+          const a = mp.getPointAtLength(Math.min(L, s + 0.6)), b = mp.getPointAtLength(Math.max(0, s - 0.6));
+          let tx = a.x - b.x, ty = a.y - b.y;
+          const l = Math.hypot(tx, ty) || 1;
+          return r1(p.x + ty / l * k) + " " + r1(p.y - tx / l * k);
+        }
+        let out = "";
+        regions.forEach(function (r, ri) {
+          for (let j = 0; j < r.n; j++) {
+            const s0 = (r.from + (r.to - r.from) * (j + 0.5) / r.n) * L;
+            const env = 0.35 + 0.65 * Math.sin(Math.PI * (j + 0.5) / r.n);
+            const len = r.len * env * (0.75 + 0.4 * rnd(seed * 11 + ri * 5 + j));
+            const inset = 3 + 3 * rnd(seed * 23 + j);
+            out += "M" + off(s0, -inset) + "Q" + off(s0 + r.dir * len * 0.5, -inset + 1.2) + " " + off(s0 + r.dir * len, -inset - 2.5);
+          }
+        });
+        return out;
+      }
+      const HAIR = 'fill="none" stroke="#c96f2c" stroke-width="1.1" stroke-linecap="round" opacity=".6"';
+
+      // Ellipse als Pfad im Uhrzeigersinn, Start oben (bzw. unten)
+      function ell(cx, cy, rx, ry, fromBottom) {
+        const y0 = fromBottom ? cy + ry : cy - ry, y1 = fromBottom ? cy - ry : cy + ry;
+        return "M" + cx + " " + y0 + " A" + rx + " " + ry + " 0 0 1 " + cx + " " + y1 + " A" + rx + " " + ry + " 0 0 1 " + cx + " " + y0 + " Z";
+      }
+
+      const EGG  = "M100 38 C140 38 162 66 164 100 C168 140 146 172 100 172 C54 172 32 140 36 100 C38 66 60 38 100 38 Z";
+      const PUFF = "M100 40 C130 40 150 56 156 78 C176 88 182 112 168 126 C170 150 146 174 100 174 C54 174 30 150 32 126 C18 112 24 88 44 78 C50 56 70 40 100 40 Z";
+      const BEAN = "M100 40 C150 40 160 60 160 104 C160 152 150 174 100 174 C50 174 40 152 40 104 C40 60 50 40 100 40 Z";
+
+      // Jede Variante:
+      //   body = Umriss, bodyFur = Fellabschnitte, cheeks = [cx, cy, rx, ry] (links; rechts gespiegelt)
+      //   cheekFur / bellyFur = {n, amp, style} – Fell an der Außenseite der Backen / Oberkante des Bauchs
+      //   ears = [cx, cy, r] (links), belly = [cy, rx, ry], eyeY = Augenlinie, faceS = Gesichtsgröße
+      //   paws = y der Pfoten, top = y für das Haarbüschel
+      // Fell-Flicks nur dort, wo Fell abstehen würde. Abschnitte als Anteil der Umrisslänge.
+      const FL = function (from, to, n, amp, dir) { return { from: from, to: to, n: n, amp: amp, style: "flick", dir: dir }; };
+      const EGG_HIPS  = [FL(0.27, 0.39, 6, 5.5, 1), FL(0.61, 0.73, 6, 5.5, -1)];
+      const EGG_HIPS_SOFT = [FL(0.28, 0.38, 5, 4, 1), FL(0.62, 0.72, 5, 4, -1)];
+      const PUFF_CHEEKS = [FL(0.235, 0.32, 5, 6, 1), FL(0.68, 0.765, 5, 6, -1)];
+      const PUFF_HIPS = [FL(0.33, 0.43, 5, 5.5, 1), FL(0.57, 0.67, 5, 5.5, -1)];
+      const PUFF_CHEEKS_SOFT = [FL(0.24, 0.315, 5, 4.2, 1), FL(0.685, 0.76, 5, 4.2, -1)];
+      const PUFF_HIPS_SOFT = [FL(0.34, 0.42, 4, 3.8, 1), FL(0.58, 0.66, 4, 3.8, -1)];
+      const MID_CHEEKS = [FL(0.235, 0.315, 5, 5.5, 1), FL(0.685, 0.765, 5, 5.5, -1)];
+      const MID_HIPS = [FL(0.33, 0.42, 5, 4.5, 1), FL(0.58, 0.67, 5, 4.5, -1)];
+      const BEAN_HIPS = [FL(0.30, 0.39, 4, 6, 1), FL(0.61, 0.70, 4, 6, -1)];
+      const CHEEK_FL = { n: 5, amp: 6, style: "flick" };       // untere Außenkante der Backen
+      // cremefarbene Flicks am Bauchrand: links nach links, rechts nach rechts geneigt
+      const CHEST_FL = [FL(0.34, 0.5, 5, 4.8, -1), FL(0.5, 0.66, 5, 4.8, 1)];
+      const CHEST_FL_SOFT = [FL(0.36, 0.5, 4, 3.4, -1), FL(0.5, 0.64, 4, 3.4, 1)];
+      // feine Haarstriche passend zu den Flicks
+      const HR = function (from, to, n, len, dir) { return { from: from, to: to, n: n, len: len, dir: dir }; };
+      const EGG_HIPS_H  = [HR(0.25, 0.37, 4, 7, 1), HR(0.63, 0.75, 4, 7, -1)];
+      const PUFF_HIPS_H = [HR(0.32, 0.42, 3, 7, 1), HR(0.58, 0.68, 3, 7, -1)];
+      const PUFF_CHEEK_H = [HR(0.2, 0.3, 3, 6, 1), HR(0.7, 0.8, 3, 6, -1)];
+      const BEAN_HIPS_H = [HR(0.27, 0.39, 4, 7, 1), HR(0.61, 0.73, 4, 7, -1)];
+      const CHEEK_H = { n: 4, len: 6 };
+      const MID_CHEEK_H = [HR(0.2, 0.31, 4, 6, 1), HR(0.69, 0.8, 4, 6, -1)];
+      const MID_HIPS_H = [HR(0.31, 0.42, 4, 6, 1), HR(0.58, 0.69, 4, 6, -1)];
+      const MID = "M100 39 C135 39 156 60 160 86 C172 98 174 118 164 128 C164 152 146 173 100 173 C54 173 36 152 36 128 C26 118 28 98 40 86 C44 60 65 39 100 39 Z";
+
+      // Basis: Form 8 "Pausbacken · voll" mit kleiner Schnauze. Variiert wird nur der Ausdruck.
+      const B8 = {
+        body: PUFF, bodyFur: PUFF_CHEEKS.concat(PUFF_HIPS), bodyHair: PUFF_CHEEK_H.concat(PUFF_HIPS_H), bellyFur: CHEST_FL,
+        cheeks: null, ears: [64, 48, 15], belly: [146, 38, 28], eyeY: 86, top: 40
+      };
+      function v8(extra) { return Object.assign({}, B8, extra); }
+
+      // Gefühle – Arme wie im animierten Hamster: [links, rechts] in Grad
+      // (0 = hängt nach unten, + = nach links ausgestellt), bend = Ellbogenbeuge.
+      const V = [
+        v8({ name: "Neutral", desc: "Form 8, Pfoten ruhig vor der Brust." }),
+        v8({ name: "Freudig winkend", desc: "Fröhliche Augen, kippt den Kopf, winkt.", isNew: true,
+          eyes: "happy", mouth: "smile", arms: [-55, -140], bends: [22, 28], rot: 5 }),
+        v8({ name: "Super", desc: "Beide Arme hoch, breites Lachen.", isNew: true,
+          eyes: "happy", mouth: "big", arms: [148, -148], bends: [20, 20], fx: "sparkle" }),
+        v8({ name: "Perfekt", desc: "Sternaugen, Jubel, Konfetti.", isNew: true,
+          eyes: "star", mouth: "big", arms: [160, -132], bends: [14, 30], blush: 0.85, fx: "confetti" }),
+        v8({ name: "Traurig", desc: "Große feuchte Augen, hängende Ohren, Träne.", isNew: true,
+          eyes: "sob", mouth: "pout", brow: { y: -3, tilt: 20 }, ears8: 55, arms: [-62, 62], tears: "left", blush: 0.35 }),
+        v8({ name: "Weinend", desc: "Augen zugekniffen, wimmert, reibt sich das Auge.", isNew: true,
+          eyes: "squeeze", mouth: "whimper", brow: { y: -3, tilt: 22 }, ears8: 62, arms: [-62, 150], bends: [22, 45], tears: "both", blush: 0.35 }),
+        v8({ name: "Überrascht", desc: "Weit offene Augen, Mund rund, Pfoten erhoben.", isNew: true,
+          eyes: "wide", mouth: "o", brow: { y: -5, tilt: -6 }, arms: [125, -125], bends: [30, 30] }),
+        v8({ name: "Erklärend", desc: "Der Tipp-Hamster: zeigt auf die Sprechblase.", isNew: true,
+          eyes: "open", mouth: "smile", brow: { y: -2, tilt: -4 }, arms: [-55, -120], bends: [22, 30], rot: 3 }),
+        v8({ name: "Gähnend", desc: "Streckt sich lang, Augen zu, Mund weit auf.", isNew: true,
+          eyes: "closed", mouth: "yawn", arms: [160, -160], bends: [8, 8], sy: 1.08, sx: 0.95 }),
+        v8({ name: "Stolz", desc: "Hände in die Hüften, zufriedenes Lächeln.", isNew: true,
+          eyes: "happy", mouth: "smile", arms: [35, -35], bends: [22, 22], sy: 1.03 })
+      ];
+
+      // ---- Gesichtsteile (wie im animierten Hamster) ----
+      function star(r1, r2) {
+        let d = "";
+        for (let i = 0; i < 10; i++) {
+          const r = i % 2 ? r2 : r1, a = -Math.PI / 2 + i * Math.PI / 5;
+          d += (i ? "L" : "M") + (r * Math.cos(a)).toFixed(1) + " " + (r * Math.sin(a)).toFixed(1);
+        }
+        return d + "Z";
+      }
+      function eyeSVG(kind, m, id) {
+        const E = "url(#eye" + id + ")";
+        switch (kind) {
+          case "happy":   return '<path d="M-8 3 Q0 -9 8 3" fill="none" ' + OUT + ' stroke-width="4" stroke-linecap="round"/>';
+          case "closed":  return '<path d="M-8 -1 Q0 6 8 -1" fill="none" ' + OUT + ' stroke-width="3.5" stroke-linecap="round"/>';
+          case "squeeze": return '<path d="M-10 -3 Q0 5 10 -3" fill="none" ' + OUT + ' stroke-width="3.4" stroke-linecap="round"/>' +
+                                 '<path d="M-7 4.5 Q0 7.5 7 4.5" fill="none" stroke="#9fd8ff" stroke-width="1.8" stroke-linecap="round"/>';
+          case "wide":    return '<circle r="10.5" fill="' + E + '"/><circle cx="3.5" cy="-4" r="4.3" fill="#fff"/><circle cx="-3.5" cy="4.5" r="2" fill="#fff" opacity=".8"/>';
+          case "star":    return '<path d="' + star(12.5, 5.4) + '" fill="#fde047" stroke="' + LINE + '" stroke-width="2" stroke-linejoin="round"/><circle cx="-2.5" cy="-3" r="1.8" fill="#fff"/>';
+          case "sob":     return '<circle r="14" fill="' + E + '"/>' +
+                                 '<g clip-path="url(#eyeClip' + id + ')">' +
+                                   '<ellipse cx="0" cy="11" rx="14" ry="6" fill="#9fd8ff" opacity=".55"/>' +
+                                   '<circle cx="4.4" cy="-3" r="5.4" fill="#fff"/><circle cx="-5" cy="5" r="2.7" fill="#fff" opacity=".9"/><circle cx="6.8" cy="5" r="1.5" fill="#fff" opacity=".75"/>' +
+                                   '<path d="M' + (-17 * m) + " -7 Q" + (-6 * m) + " -11.5 " + (6 * m) + " -17 L" + (-17 * m) + ' -20 Z" fill="url(#lid' + (m > 0 ? "L" : "R") + id + ')" stroke="' + LINE + '" stroke-width="2"/>' +
+                                 "</g>" +
+                                 '<path d="M-10 10.4 Q0 14.6 10 10.4" fill="none" stroke="#d6f1ff" stroke-width="1.6" stroke-linecap="round" opacity=".9"/>';
+          default:        return '<circle r="9" fill="' + E + '"/><circle cx="3" cy="-4" r="3.2" fill="#fff"/><circle cx="-3" cy="4" r="1.6" fill="#fff" opacity=".75"/>';
+        }
+      }
+      const MOUTHS = {
+        w: '<path d="M91 108 Q95.5 114 100 108 Q104.5 114 109 108" fill="none" ' + OUT + ' stroke-linecap="round"/>' +
+           '<rect x="97.6" y="108.6" width="4.8" height="4" rx="1.2" fill="#fff" stroke="' + LINE + '" stroke-width="1"/>',
+        smile: '<path d="M87 107 Q100 128 113 107 Q100 111 87 107 Z" fill="#8a2c1c" ' + OUT + '/>' +
+               '<ellipse cx="100" cy="114.5" rx="5.5" ry="2.5" fill="#f58ba0"/><rect x="96" y="107.5" width="8" height="5.5" rx="1.5" fill="#fff"/>',
+        big: '<path d="M84 105 Q100 134 116 105 Q100 110 84 105 Z" fill="#8a2c1c" ' + OUT + '/>' +
+             '<ellipse cx="100" cy="116" rx="7" ry="3" fill="#f58ba0"/><rect x="95.5" y="106.5" width="9" height="6" rx="1.5" fill="#fff"/>',
+        o: '<ellipse cx="100" cy="112" rx="5.5" ry="6.5" fill="#8a2c1c" ' + OUT + ' stroke-width="2.4"/><ellipse cx="100" cy="115.5" rx="3.2" ry="1.8" fill="#f58ba0"/>',
+        yawn: '<ellipse cx="100" cy="114" rx="8" ry="10" fill="#8a2c1c" ' + OUT + ' stroke-width="2.4"/><ellipse cx="100" cy="119.5" rx="5" ry="3" fill="#f58ba0"/>',
+        whimper: '<path d="M90 116 Q93 110.5 97 113.5 Q100 115.5 103 113.5 Q107 110.5 110 116 Q100 121.5 90 116 Z" fill="#8a2c1c" ' + OUT + ' stroke-width="2.2"/>' +
+                 '<ellipse cx="100" cy="118" rx="3.6" ry="1.4" fill="#f58ba0"/>',
+        pout: '<path d="M90 116 Q100 110 110 116" fill="none" ' + OUT + ' stroke-linecap="round"/><path d="M94.5 117.5 Q100 121.5 105.5 117.5" fill="none" ' + OUT + ' stroke-width="2.2" stroke-linecap="round"/>'
+      };
+      function pawSVG(edge, w) {
+        const st = 'stroke="' + edge + '" stroke-width="' + w + '"';
+        return '<ellipse rx="7.4" ry="6.6" fill="#ffd2b8" ' + st + '/>' +
+          '<circle cx="-3.8" cy="5.2" r="2.1" fill="#ffc4a8" ' + st + '/>' +
+          '<circle cx="0" cy="6.5" r="2.1" fill="#ffc4a8" ' + st + '/>' +
+          '<circle cx="3.8" cy="5.2" r="2.1" fill="#ffc4a8" ' + st + '/>';
+      }
+      let ARM_STYLE = "illu";
+      const TEAR = '<path d="M0 -6 C0 -6 6 1 6 5 A6 6 0 0 1 -6 5 C-6 1 0 -6 0 -6 Z" fill="#9fd8ff" stroke="#3b82c4" stroke-width="1.4"/><circle cx="-2" cy="4" r="1.5" fill="#fff" opacity=".85"/>';
+
+      function face(v, id) {
+        const s = v.faceS || 1, ek = v.eyes || "open", bl = v.blush == null ? 0.6 : v.blush;
+        let g = '<g class="face" transform="translate(100 ' + v.eyeY + ') scale(' + s + ') translate(-100 -88)">' +
+          '<ellipse cx="100" cy="104" rx="22" ry="14" fill="#fff3df"/>' +
+          '<ellipse cx="60" cy="109" rx="9" ry="5.5" fill="#ff8fa3" opacity="' + bl + '"/>' +
+          '<ellipse cx="140" cy="109" rx="9" ry="5.5" fill="#ff8fa3" opacity="' + bl + '"/>';
+        if (v.tears) {
+          g += '<path d="M69 101 Q65 113 66 128" fill="none" stroke="#9fd8ff" stroke-width="2.6" stroke-linecap="round" opacity=".6"/>';
+          if (v.tears === "both") g += '<path d="M131 101 Q135 113 134 128" fill="none" stroke="#9fd8ff" stroke-width="2.6" stroke-linecap="round" opacity=".6"/>';
+        }
+        g += '<g transform="translate(78 ' + (88 + (v.lookY || 0)) + ')">' + eyeSVG(ek, 1, id) + "</g>" +
+             '<g transform="translate(122 ' + (88 + (v.lookY || 0)) + ')">' + eyeSVG(ek, -1, id) + "</g>";
+        if (v.brow) {
+          const b = v.brow;
+          g += '<path d="M-9 1 Q0 -3 9 1" transform="translate(78 ' + (72 + b.y) + ') rotate(' + (-b.tilt) + ')" fill="none" ' + OUT + ' stroke-width="2.4" stroke-linecap="round"/>' +
+               '<path d="M-9 1 Q0 -3 9 1" transform="translate(122 ' + (72 + b.y) + ') rotate(' + b.tilt + ')" fill="none" ' + OUT + ' stroke-width="2.4" stroke-linecap="round"/>';
+        }
+        g += '<path d="M79 101 L58 97 M79 105.5 L57 106.5 M121 101 L142 97 M121 105.5 L143 106.5" stroke="' + LINE + '" stroke-width="1.3" stroke-linecap="round" opacity=".45"/>' +
+             '<path d="M95 99 Q100 96 105 99 Q103 104 100 104 Q97 104 95 99 Z" fill="#e8677f" stroke="' + LINE + '" stroke-width="1.4" stroke-linejoin="round"/>' +
+             MOUTHS[v.mouth || "w"];
+        if (v.tears) g += '<g transform="translate(67 120)">' + TEAR + "</g>";
+        if (v.tears === "both") g += '<g transform="translate(134 116) scale(.85)">' + TEAR + "</g>";
+        return g + "</g>";
+      }
+
+      // Arm wie im animierten Hamster: gebogener Schlauch, weiche Kontur, Pfote mit Zehen
+      function armSVG(angle, bend, side, id) {
+        const DEG = Math.PI / 180;
+        const t = Math.max(0, Math.min(1, (Math.abs(angle) - 60) / 60)), r = 0.5 - Math.cos(Math.PI * t) / 2;
+        const sx = 100 + side * (31 + 17 * r), sy = 117 - 3 * r, L = 18 + 9 * r;
+        const sg = angle >= 0 ? 1 : -1;
+        const cA = (angle - sg * bend) * DEG, wA = angle * DEG;
+        const cx = sx - Math.sin(cA) * L * 0.6, cy = sy + Math.cos(cA) * L * 0.6;
+        const wx = sx - Math.sin(wA) * L, wy = sy + Math.cos(wA) * L;
+        const d = "M" + r1(sx) + " " + r1(sy) + "Q" + r1(cx) + " " + r1(cy) + " " + r1(wx) + " " + r1(wy);
+        const pa = Math.atan2(-(wx - cx), wy - cy) / DEG;
+        const st = ARM_STYLE;
+
+        // ---- Illustrations-Arm: verjüngte Form, Kontur wie der Körper, die an der
+        // Schulter aus dem Nichts wächst, kleiner Fell-Flick unter dem Ellbogen ----
+        function illuArm() {
+          // Kanten der verjüngten Form entlang der gebogenen Mittellinie abtasten
+          const N = 10, PA = [], PB = [];
+          for (let i = 0; i <= N; i++) {
+            const t = i / N, u = 1 - t;
+            const px = u * u * sx + 2 * u * t * cx + t * t * wx, py = u * u * sy + 2 * u * t * cy + t * t * wy;
+            let tx = 2 * u * (cx - sx) + 2 * t * (wx - cx), ty = 2 * u * (cy - sy) + 2 * t * (wy - cy);
+            const l = Math.hypot(tx, ty) || 1; tx /= l; ty /= l;
+            const hw = 6.8 - 2.2 * t;
+            PA.push([px - ty * hw, py + tx * hw]);
+            PB.push([px + ty * hw, py - tx * hw]);
+          }
+          // geschlossener Umriss, mit Quadratik-Glättung über die Mittelpunkte (keine Ecken)
+          const pts = PA.concat(PB.reverse());
+          const P = function (p) { return r1(p[0]) + " " + r1(p[1]); };
+          const mid = function (p, q) { return [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2]; };
+          let dd = "M" + P(mid(pts[pts.length - 1], pts[0]));
+          for (let i = 0; i < pts.length; i++) dd += "Q" + P(pts[i]) + " " + P(mid(pts[i], pts[(i + 1) % pts.length]));
+          dd += "Z";
+          // Kontur blendet an der Schulter weich ein (Maske mit radialem Verlauf um die Schulter)
+          const mk = "am" + id + (side > 0 ? "r" : "l");
+          const F = "url(#fur" + id + ")";
+          return '<radialGradient id="' + mk + 'g" gradientUnits="userSpaceOnUse" cx="' + r1(sx) + '" cy="' + r1(sy) + '" r="12">' +
+              '<stop offset="0.3" stop-color="#000"/><stop offset="1" stop-color="#fff"/></radialGradient>' +
+            '<mask id="' + mk + '" maskUnits="userSpaceOnUse" x="0" y="0" width="200" height="200"><rect width="200" height="200" fill="url(#' + mk + 'g)"/></mask>' +
+            '<path class="part" d="' + dd + '" fill="' + F + '"/>' +
+            '<path class="face" d="' + dd + '" fill="none" stroke="' + LINE + '" stroke-width="2.4" stroke-linejoin="round" mask="url(#' + mk + ')"/>' +
+            '<g class="paws" transform="translate(' + r1(wx) + " " + r1(wy) + ") rotate(" + r1(pa) + ')">' + pawSVG("#a65a2a", 1.6) + "</g>";
+        }
+        function shadowLate() { return ""; }
+        const A = "url(#fur" + id + ")";   // gleiches Fell wie der Körper
+        const paw = function (edge, w) {
+          return '<g class="paws" transform="translate(' + r1(wx) + " " + r1(wy) + ") rotate(" + r1(pa) + ')">' + pawSVG(edge, w) + "</g>";
+        };
+        // weicher Schlagschatten auf den Körper (Licht von oben links), nur innerhalb des Körpers
+        const shadow = function (op) {
+          return '<g clip-path="url(#clip' + id + ')"><path class="face" d="' + d + '" transform="translate(1 1.6)" fill="none" stroke="rgba(110,45,10,' + op + ')" stroke-width="11" stroke-linecap="round" filter="url(#soft' + id + ')"/></g>';
+        };
+        const tube = '<path class="part" d="' + d + '" fill="none" stroke="' + A + '" stroke-width="11" stroke-linecap="round"/>';
+        if (st === "illu") return illuArm();
+        if (st === "kontur") {
+          return '<path class="part" d="' + d + '" fill="none" stroke="#a95b24" stroke-width="13.8" stroke-linecap="round"/>' + tube +
+            '<circle class="part" cx="' + r1(sx) + '" cy="' + r1(sy) + '" r="7" fill="' + A + '"/>' + paw("#c8784a", 1.3);
+        }
+        if (st === "fein") {
+          return shadow(0.08) +
+            '<path class="part" d="' + d + '" fill="none" stroke="#d48a4c" stroke-width="12.6" stroke-linecap="round"/>' + tube +
+            '<circle class="part" cx="' + r1(sx) + '" cy="' + r1(sy) + '" r="6.6" fill="' + A + '"/>' + paw("#d79870", 1);
+        }
+        // weich: keine Linie – Schatten darunter, feine Lichtkante oben
+        // Volumen innerhalb des Arms: weiche dunklere Unterseite + weiche Lichtkante, auf den Arm maskiert
+        const mid = "am" + id + (side > 0 ? "r" : "l");
+        const inner = '<mask id="' + mid + '" maskUnits="userSpaceOnUse" x="0" y="0" width="200" height="200">' +
+            '<path d="' + d + '" fill="none" stroke="#fff" stroke-width="11" stroke-linecap="round"/></mask>' +
+          '<g class="face" mask="url(#' + mid + ')">' +
+            '<path d="' + d + '" transform="translate(1.8 2.4)" fill="none" stroke="rgba(150,62,14,.32)" stroke-width="8" stroke-linecap="round" filter="url(#soft' + id + ')"/>' +
+            '<path d="' + d + '" transform="translate(-2.2 -2.2)" fill="none" stroke="#fff1d2" stroke-width="5" stroke-linecap="round" opacity=".55" filter="url(#soft' + id + ')"/>' +
+          "</g>";
+        return shadow(0.16) + tube + inner +
+          paw("#dca17a", 0.9);
+      }
+
+      function effects(kind) {
+        if (kind === "sparkle") {
+          return [[30, 52, 14], [170, 62, 11], [26, 120, 9], [176, 128, 12]].map(function (p) {
+            return '<path class="face" transform="translate(' + p[0] + " " + p[1] + ") scale(" + p[2] / 10 + ')" d="M0 -10 Q1.5 -1.5 10 0 Q1.5 1.5 0 10 Q-1.5 1.5 -10 0 Q-1.5 -1.5 0 -10 Z" fill="#fde047"/>';
+          }).join("");
+        }
+        if (kind === "confetti") {
+          const C = ["#60a5fa", "#22d3ee", "#fbbf24", "#c084fc", "#f87171", "#6ee7b7", "#fb923c"];
+          let out = "";
+          for (let i = 0; i < 18; i++) {
+            const x = 14 + rnd(i * 3.1) * 172, y = 10 + rnd(i * 7.7) * 80, c = C[i % C.length];
+            out += i % 3 === 0
+              ? '<circle class="face" cx="' + r1(x) + '" cy="' + r1(y) + '" r="2.6" fill="' + c + '"/>'
+              : '<rect class="face" x="' + r1(x) + '" y="' + r1(y) + '" width="4.5" height="7.5" rx="1" fill="' + c + '" transform="rotate(' + Math.round(rnd(i * 5.3) * 180) + " " + r1(x) + " " + r1(y) + ')"/>';
+          }
+          return out;
+        }
+        return "";
+      }
+
+      function hamster(v, id) {
+        const F = "url(#fur" + id + ")";
+        const body = fur(v.body, v.bodyFur, 1);   // gleicher Fell-Seed für alle → identische Form
+        function furGrad(gid, cx, cy, light) {
+          return '<radialGradient id="' + gid + '" gradientUnits="userSpaceOnUse" cx="' + cx + '" cy="' + cy + '" r="115">' +
+            (light ? '<stop offset="0" stop-color="#ffe0ad"/><stop offset="0.6" stop-color="#fbbd78"/><stop offset="1" stop-color="#ec9a52"/>'
+                   : '<stop offset="0" stop-color="#ffcf8f"/><stop offset="0.6" stop-color="#f4a55a"/><stop offset="1" stop-color="#d9772e"/>') +
+            "</radialGradient>";
+        }
+        let svg = '<svg viewBox="0 0 200 200" aria-label="' + v.name + '">' +
+          "<defs>" +
+            furGrad("fur" + id, 82, 70) + furGrad("arm" + id, 82, 70, true) +
+            '<radialGradient id="armLight' + id + '" gradientUnits="userSpaceOnUse" cx="82" cy="70" r="115">' +
+              '<stop offset="0" stop-color="#fff0d4"/><stop offset="0.6" stop-color="#ffd7a3"/><stop offset="1" stop-color="#f6b878"/></radialGradient>' +
+            furGrad("lidL" + id, 4, -18) + furGrad("lidR" + id, -40, -18) +
+            '<radialGradient id="eye' + id + '" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#6a3a1c"/><stop offset="1" stop-color="#160904"/></radialGradient>' +
+            '<clipPath id="clip' + id + '"><path d="' + body + '"/></clipPath>' +
+            '<clipPath id="eyeClip' + id + '"><circle r="14"/></clipPath>' +
+            '<filter id="soft' + id + '" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="1.3"/></filter>' +
+          "</defs>" +
+          effects(v.fx) +
+          '<ellipse class="shadow" cx="100" cy="180" rx="48" ry="7" fill="rgba(0,0,0,.28)"/>' +
+          '<g transform="rotate(' + (v.rot || 0) + ' 100 176) translate(100 176) scale(' + (v.sx || 1) + " " + (v.sy || 1) + ') translate(-100 -176)">';
+
+        // Ohren (bei Traurigkeit nach außen gekippt)
+        const e = v.ears, droop = v.ears8 || 0;
+        [[e[0], -1], [200 - e[0], 1]].forEach(function (o) {
+          const cx = o[0];
+          // Drehpunkt an der inneren Unterkante des Ohrs → klappt nach außen-unten weg
+          svg += '<g transform="rotate(' + (o[1] * droop) + " " + (cx - o[1] * 6) + " " + (e[1] + 13) + ')">' +
+            '<ellipse class="part" cx="' + cx + '" cy="' + e[1] + '" rx="' + e[2] + '" ry="' + r1(e[2] * 1.12) + '" fill="' + F + '" ' + OUT + "/>" +
+            '<ellipse class="face" cx="' + cx + '" cy="' + (e[1] + 1.5) + '" rx="' + r1(e[2] * 0.55) + '" ry="' + r1(e[2] * 0.68) + '" fill="#f7a7b6"/></g>';
+        });
+        svg += '<path class="part" d="' + body + '" fill="' + F + '" ' + OUT + "/>";
+        const bd = fur(ell(100, v.belly[0], v.belly[1], v.belly[2], true), v.bellyFur || null, 50);
+        svg += '<path class="belly" d="' + bd + '" fill="#fff3df" clip-path="url(#clip' + id + ')"/>';
+        if (v.bodyHair) svg += '<path class="face" d="' + hairs(v.body, v.bodyHair, 3) + '" ' + HAIR + "/>";
+        // Haarbüschel
+        svg += '<path class="face" d="M94 ' + (v.top + 4) + " Q97 " + (v.top - 7) + " 100 " + (v.top + 2) + " Q103 " + (v.top - 8) + " 106 " + (v.top + 4) +
+          '" fill="none" ' + OUT + ' stroke-linecap="round"/>';
+        svg += face(v, id);
+        // Füße und Arme
+        [80, 120].forEach(function (x) {
+          svg += '<g transform="translate(' + x + ' 172)"><ellipse class="part" rx="13" ry="7" fill="#ffd2b8" stroke="#a65a2a" stroke-width="2"/>' +
+            '<g class="paws"><circle cx="-6.5" cy="4.2" r="2.4" fill="#ffc4a8" stroke="#c8784a" stroke-width="1.2"/><circle cx="0" cy="5.6" r="2.4" fill="#ffc4a8" stroke="#c8784a" stroke-width="1.2"/>' +
+            '<circle cx="6.5" cy="4.2" r="2.4" fill="#ffc4a8" stroke="#c8784a" stroke-width="1.2"/></g></g>';
+        });
+        const arms = v.arms || [-55, 55], bends = v.bends || [22, 22];
+        svg += armSVG(arms[0], bends[0], -1, id) + armSVG(arms[1], bends[1], 1, id);
+        return svg + "</g></svg>";
+      }
+
+      const grid = document.getElementById("grid");
+      function render() {
+        grid.innerHTML = "";
+        V.forEach(function (v, i) {
+          const card = document.createElement("div");
+          card.className = "card";
+          card.innerHTML = '<div class="card__no">NR. ' + (i + 1) + (v.isNew ? " · NEU" : "") + '</div><div class="card__name">' + v.name + "</div>" +
+            '<div class="card__desc">' + v.desc + "</div>" + hamster(v, i);
+          grid.appendChild(card);
+        });
+      }
+      render();
+      document.querySelectorAll("#armStyle .btn").forEach(function (b) {
+        b.addEventListener("click", function () {
+          ARM_STYLE = b.dataset.style;
+          document.querySelectorAll("#armStyle .btn").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
+          render();
+        });
+      });
+
+      const silBtn = document.getElementById("sil");
+      silBtn.addEventListener("click", function () {
+        silBtn.setAttribute("aria-pressed", String(grid.classList.toggle("sil")));
+      });
+      const themeBtn = document.getElementById("theme");
+      themeBtn.addEventListener("click", function () {
+        themeBtn.setAttribute("aria-pressed", String(document.body.classList.toggle("light")));
+      });
+    })();
+  </script>
+</body>
+</html>

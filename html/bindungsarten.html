@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chemie – Bindungsarten</title>
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../lib/hamster/hamster.css">
+  <link rel="stylesheet" href="../css/bindungsarten.css">
+</head>
+<body class="page page--fit page--with-sidebar">
+  <a class="back" href="chemie.html">&#8592; Zurück</a>
+
+  <header class="topbar">
+    <h1 class="topbar__title">Bindungsarten im Vergleich</h1>
+  </header>
+
+  <main class="btable-wrap">
+    <div class="btable">
+      <!-- Kopfzeile -->
+      <div class="bt-corner"></div>
+      <div class="bt-head bt-head--ion">Ionenbindung</div>
+      <div class="bt-head bt-head--atom">Atombindung</div>
+      <div class="bt-head bt-head--metall">Metallbindung</div>
+
+      <!-- Modell -->
+      <div class="bt-label">Modell</div>
+      <div class="bt-cell bt-cell--model">
+        <svg viewBox="0 0 150 76" class="model">
+          <g class="model__ion">
+            <circle cx="30" cy="25" r="13"/><text x="30" y="25">+</text>
+            <circle cx="60" cy="25" r="13" class="neg"/><text x="60" y="25">−</text>
+            <circle cx="90" cy="25" r="13"/><text x="90" y="25">+</text>
+            <circle cx="45" cy="52" r="13" class="neg"/><text x="45" y="52">−</text>
+            <circle cx="75" cy="52" r="13"/><text x="75" y="52">+</text>
+            <circle cx="105" cy="52" r="13" class="neg"/><text x="105" y="52">−</text>
+          </g>
+        </svg>
+        <p class="bt-cap">Kationen (+) und Anionen (−) im Ionengitter</p>
+      </div>
+      <div class="bt-cell bt-cell--model">
+        <svg viewBox="0 0 150 76" class="model">
+          <circle cx="50" cy="38" r="20" class="atom"/><text x="50" y="38" class="sym">A</text>
+          <circle cx="100" cy="38" r="20" class="atom"/><text x="100" y="38" class="sym">B</text>
+          <circle cx="68" cy="31" r="3.5" class="e"/>
+          <circle cx="68" cy="45" r="3.5" class="e"/>
+        </svg>
+        <p class="bt-cap">Gemeinsames (bindendes) Elektronenpaar</p>
+      </div>
+      <div class="bt-cell bt-cell--model">
+        <svg viewBox="0 0 150 76" class="model">
+          <g class="model__metal">
+            <circle cx="30" cy="25" r="13"/><text x="30" y="25">+</text>
+            <circle cx="65" cy="25" r="13"/><text x="65" y="25">+</text>
+            <circle cx="100" cy="25" r="13"/><text x="100" y="25">+</text>
+            <circle cx="47" cy="52" r="13"/><text x="47" y="52">+</text>
+            <circle cx="82" cy="52" r="13"/><text x="82" y="52">+</text>
+            <circle cx="117" cy="52" r="13"/><text x="117" y="52">+</text>
+          </g>
+          <g class="e">
+            <circle cx="48" cy="25" r="2.6"/><circle cx="83" cy="25" r="2.6"/>
+            <circle cx="30" cy="40" r="2.6"/><circle cx="65" cy="40" r="2.6"/><circle cx="100" cy="40" r="2.6"/>
+            <circle cx="64" cy="52" r="2.6"/><circle cx="99" cy="52" r="2.6"/>
+          </g>
+        </svg>
+        <p class="bt-cap">Atomrümpfe (Me⁺) + frei bewegliches Elektronengas</p>
+      </div>
+
+      <!-- Entstehung -->
+      <div class="bt-label">Entstehung</div>
+      <div class="bt-cell">
+        Durch <strong>Elektronenabgabe</strong> der Metall-Atome und <strong>Elektronenaufnahme</strong>
+        der Nichtmetall-Atome entstehen geladene Teilchen (Ionen). Aufgrund der gegensätzlichen
+        Ladungen ziehen sich die Ionen an.
+      </div>
+      <div class="bt-cell">
+        <strong>Nichtmetall-Atome</strong> nähern sich aneinander, sodass sie Elektronen
+        <strong>gemeinsam nutzen</strong>. Dadurch entstehen bindende Elektronenpaare.
+      </div>
+      <div class="bt-cell">
+        <strong>Metall-Atome</strong> geben Elektronen ab. Diese bewegen sich als
+        <strong>Elektronengas</strong> frei zwischen den positiv geladenen Atomrümpfen;
+        Rümpfe und Elektronengas ziehen sich an.
+      </div>
+
+      <!-- kleinste Teilchen -->
+      <div class="bt-label">Kleinste Teilchen</div>
+      <div class="bt-cell">
+        Positiv und negativ geladene <strong>Ionen</strong>, die sich regelmäßig anordnen —
+        es entsteht ein <strong>Ionengitter</strong>.
+      </div>
+      <div class="bt-cell">
+        <strong>Moleküle</strong> aus zwei oder mehr Atomen.
+      </div>
+      <div class="bt-cell">
+        Positiv geladene <strong>Atomrümpfe</strong> und frei bewegliche Elektronen (Elektronengas).
+      </div>
+
+      <!-- Stoffeigenschaften -->
+      <div class="bt-label">Stoffeigenschaften</div>
+      <div class="bt-cell">
+        <ul>
+          <li>hohe Schmelz- und Siedetemperaturen</li>
+          <li>hart und spröde</li>
+          <li>Schmelze und Lösung leiten den Strom</li>
+        </ul>
+      </div>
+      <div class="bt-cell">
+        <ul>
+          <li>meist niedrige Schmelz- und Siedetemperaturen</li>
+          <li>leiten den Strom nicht</li>
+        </ul>
+      </div>
+      <div class="bt-cell">
+        <ul>
+          <li>gut verformbar</li>
+          <li>metallischer Glanz</li>
+          <li>leiten den Strom</li>
+        </ul>
+      </div>
+    </div>
+  </main>
+
+  <!-- Info-Panel rechts, auf-/zuklappbar -->
+  <aside class="sidebar" id="sidebar">
+    <button type="button" class="sidebar__toggle" id="sidebarToggle" aria-label="Panel auf-/zuklappen" aria-controls="sidebar">&rsaquo;</button>
+    <div class="sidebar__content">
+      <section class="panel">
+        <h2 class="panel__title">Lernkarten</h2>
+        <p class="panel__hint">Karte antippen zum Öffnen.</p>
+        <div class="card-stack" id="cards"></div>
+        <button type="button" class="btn btn--block" id="practiceBtn">Üben</button>
+      </section>
+
+      <section class="panel accent-cyan">
+        <h2 class="panel__title">Welche Bindung?</h2>
+        <p class="panel__hint">Ordne Stoffe und Eigenschaften der richtigen Bindungsart zu.</p>
+        <button type="button" class="btn btn--primary btn--block" id="quizBtn">Quiz starten</button>
+      </section>
+
+      <section class="panel">
+        <h2 class="panel__title">Oktettregel</h2>
+        <p class="panel__hint">Warum gehen Atome überhaupt Bindungen ein?</p>
+        <a class="btn btn--block" href="periodensystem.html#oktettregel">Schritt für Schritt erklärt</a>
+      </section>
+    </div>
+  </aside>
+
+  <!-- Lernkarten-Overlay -->
+  <div class="overlay" id="cardOverlay" hidden>
+    <div class="dialog dialog--sm bigcard" id="bigcard" role="dialog" aria-modal="true" aria-labelledby="cardTitle">
+      <button type="button" class="close close--on-accent" id="cardClose" aria-label="Schließen">&times;</button>
+      <p class="bigcard__counter" id="cardCounter" hidden></p>
+      <div class="bigcard__title" id="cardTitle"></div>
+      <div class="bigcard__body prose" id="cardBody"></div>
+      <button type="button" class="btn btn--primary bigcard__action" id="cardAction" hidden></button>
+    </div>
+  </div>
+
+  <!-- Quiz-Overlay -->
+  <div class="overlay" id="quizOverlay" hidden>
+    <div class="dialog dialog--sm quiz accent-cyan" role="dialog" aria-modal="true" aria-label="Quiz: Welche Bindung?">
+      <button type="button" class="close" id="quizClose" aria-label="Schließen">&times;</button>
+      <p class="quiz__counter" id="quizCounter"></p>
+      <div id="quizStage">
+        <p class="quiz__lead">Welche Bindungsart?</p>
+        <p class="quiz__prompt" id="quizPrompt"></p>
+        <div class="quiz__options" id="quizOptions"></div>
+        <p class="quiz__feedback" id="quizFeedback" aria-live="polite"></p>
+        <button type="button" class="btn btn--primary btn--block quiz__next" id="quizNext" hidden></button>
+      </div>
+      <div class="quiz__result" id="quizResult" hidden>
+        <div id="hamsterContainer"></div>
+        <p class="quiz__score" id="quizScore"></p>
+        <button type="button" class="btn btn--primary btn--block" id="quizRestart">Nochmal</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../lib/hamster/hamster.js"></script>
+  <script src="../js/ui.js"></script>
+  <script src="../data/quiz-bindungsarten.js"></script>
+  <script src="../js/bindungsarten.js"></script>
+</body>
+</html>

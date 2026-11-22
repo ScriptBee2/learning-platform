@@ -1,0 +1,235 @@
+/* =====================================================================
+   Mathe – Grundlagen: nur seitenspezifische Styles.
+   Gemeinsame Bausteine und Formel-Styles (.math-block, .math-lines): base.css
+   ===================================================================== */
+
+/* ---------- Abschnitte ---------- */
+.rule-section + .rule-section { margin-top: var(--sp-10); }
+.rule-section__head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-4);
+}
+.rule-section__title { font-size: var(--fs-xl); }
+.rule-section__title::before {   /* Farbmarke des Abschnitts */
+  content: "";
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: var(--sp-2);
+  border-radius: 50%;
+  background: var(--accent);
+  vertical-align: 0.1em;
+}
+
+/* ---------- Regelkarten ---------- */
+.rule-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: var(--sp-3);
+}
+.rule-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  min-height: 108px;
+  padding: var(--sp-3) var(--sp-4) var(--sp-4);
+  border: 0;
+  border-left: 4px solid var(--accent);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  color: var(--text);
+  text-align: left;
+  transition: transform var(--t-fast), box-shadow var(--t-fast), background var(--t-fast);
+}
+.rule-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.35);
+  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
+}
+.rule-card__label {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.rule-card__formula {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+  overflow-y: hidden;
+  color: var(--text-strong);
+  font-size: 1.1rem;
+}
+
+/* ---------- Detail-Dialog ---------- */
+.rule-detail { display: flex; flex-direction: column; gap: var(--sp-4); }
+.rule-detail__box {
+  padding: var(--sp-4);
+  border-radius: var(--r-md);
+  background: var(--surface-sunken);
+}
+.rule-detail__box .eyebrow { margin-bottom: var(--sp-2); }
+.rule-detail__box p { line-height: var(--lh-relaxed); }
+.rule-detail__derivation { margin-top: var(--sp-3); }
+.rule-detail__derivation .katex-display { text-align: left; }
+.rule-detail__derivation .katex-display > .katex { text-align: left; }
+
+.rule-detail__condition { margin-top: var(--sp-2); color: var(--text-muted); font-size: var(--fs-sm); font-weight: 400; }
+.rule-detail__words {
+  padding-left: var(--sp-4);
+  border-left: 3px solid var(--accent);
+  font-size: var(--fs-lg);
+  line-height: var(--lh-relaxed);
+}
+
+/* Typischer Fehler: falsch (rot) und richtig (grün) untereinander */
+.rule-detail__box--mistake {
+  border: 1px solid color-mix(in srgb, var(--danger) 35%, transparent);
+  background: color-mix(in srgb, var(--danger) 7%, transparent);
+}
+.mistakes { list-style: none; display: flex; flex-direction: column; gap: var(--sp-5); }
+.mistake__line { display: flex; align-items: baseline; gap: var(--sp-3); }
+.mistake__line + .mistake__line { margin-top: var(--sp-2); }
+.mistake__mark { flex: 0 0 1em; font-weight: 800; }
+.mistake__line--wrong { color: var(--danger-text); }
+.mistake__line--right .mistake__mark { color: var(--success); }
+.mistake__note { margin-top: var(--sp-2); padding-left: calc(1em + var(--sp-3)); color: var(--text-muted); font-size: var(--fs-sm); }
+
+/* Nummerierte Schritte */
+.steps { list-style: none; counter-reset: step; display: flex; flex-direction: column; }
+.steps li {
+  counter-increment: step;
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-3);
+  padding: var(--sp-2) 0;
+  border-bottom: 1px solid var(--border);
+}
+.steps li:last-child { border-bottom: 0; }
+.steps li::before {
+  content: counter(step);
+  flex: 0 0 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--accent) 25%, transparent);
+  color: var(--text-strong);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  line-height: 1.5rem;
+  text-align: center;
+}
+
+/* ---------- Lernkarten: Regel + Formel ---------- */
+.formula-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: var(--sp-4); }
+ol.formula-list { counter-reset: fl; }
+.formula-list li { display: flex; flex-direction: column; gap: var(--sp-1); }
+.formula-list__label { font-size: var(--fs-sm); font-weight: 600; color: var(--text-muted); }
+ol.formula-list li { counter-increment: fl; }
+ol.formula-list .formula-list__label::before { content: counter(fl) ". "; color: var(--accent); }
+.formula-list__math { color: var(--text-strong); font-size: 1.1rem; overflow-x: auto; overflow-y: hidden; }
+
+/* Quiz-Antworten mit Formeln: etwas mehr Luft für Brüche */
+.quiz__opt .katex { font-size: 1.25em; }
+.quiz__prompt .katex { font-size: 1em; }
+.prose .formula-list li + li { margin-top: 0; }   /* Abstand kommt aus gap */
+
+/* ---------- Übungsaufgaben: Sidebar-Filter ---------- */
+.ueb-filter { display: flex; flex-direction: column; gap: var(--sp-2); margin-bottom: var(--sp-4); }
+.ueb-filter__label { font-size: var(--fs-sm); color: var(--text-muted); font-weight: 600; }
+.ueb-filter__select {
+  width: 100%;
+  padding: var(--sp-2) var(--sp-3);
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-sm);
+  font-size: var(--fs-sm);
+  font-family: var(--font);
+}
+.ueb-filter__select:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+.ueb-level { display: flex; gap: var(--sp-1); }
+.ueb-level__btn {
+  flex: 1;
+  padding: var(--sp-1) 0;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-pill);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  cursor: pointer;
+  transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast);
+}
+.ueb-level__btn:hover { background: var(--surface-hover); color: var(--text); }
+.ueb-level__btn.is-active { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+
+/* ---------- Übungsaufgaben: Level-Chip im Dialog ---------- */
+.ueb-level-chip {
+  padding: 2px var(--sp-3);
+  border-radius: var(--r-pill);
+  background: var(--chip-color, var(--blue));
+  color: var(--on-accent);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* ---------- Übungsaufgaben: Lösungsweg ---------- */
+.ueb-solution { margin-top: var(--sp-4); }
+.ueb-solution__toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+  cursor: pointer;
+  transition: background var(--t-fast), color var(--t-fast);
+  width: 100%;
+  text-align: left;
+}
+.ueb-solution__toggle:hover { background: var(--surface-hover); color: var(--text); }
+.ueb-solution__toggle[aria-expanded="true"] { color: var(--accent); border-color: var(--accent); }
+.ueb-solution__steps {
+  list-style: none;
+  counter-reset: sol;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-top: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--surface-sunken);
+  border-radius: var(--r-md);
+  border-left: 3px solid var(--accent);
+}
+.ueb-solution__steps li {
+  counter-increment: sol;
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-3);
+  padding: var(--sp-2) 0;
+  border-bottom: 1px solid var(--border);
+}
+.ueb-solution__steps li:last-child { border-bottom: 0; }
+.ueb-solution__steps li::before {
+  content: counter(sol);
+  flex: 0 0 1.4rem;
+  height: 1.4rem;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--accent) 30%, transparent);
+  color: var(--text-strong);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  line-height: 1.4rem;
+  text-align: center;
+}

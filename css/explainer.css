@@ -1,0 +1,202 @@
+/* =====================================================================
+   Erklär-Player (js/explainer.js): Schritt-für-Schritt-Erklärungen mit Animation.
+   Gemeinsame Bausteine (Overlay, Dialog, Knöpfe …): base.css
+
+   Ziel: Der Dialog passt immer komplett ins Fenster, ohne zu scrollen.
+   - Der Dialog ist höchstens so hoch wie das Fenster (Flex-Spalte).
+   - Die Animation schrumpft mit (SVG skaliert, Seitenverhältnis bleibt).
+   - Die Navigation steht immer unten in der Karte.
+   - Nur wenn es extrem eng wird, scrollt der Erklärtext in sich.
+   ===================================================================== */
+
+/* ---------- Farben der Animation ---------- */
+.expl-dialog {
+  --e:        var(--yellow);  /* Elektronen */
+  --e-stroke: #92400e;
+  --ring:     #475569;        /* innere Schalen */
+  --mark:     #fde68a;        /* hervorgehobene Wörter */
+  --pt-row:   var(--cyan);    /* Mini-PSE: markierte Zeile */
+  --pt-col:   var(--amber);   /* Mini-PSE: markierte Spalte */
+}
+
+/* ---------- Dialog ---------- */
+.expl-dialog {
+  display: flex;
+  flex-direction: column;
+  max-width: 1180px;
+  padding: var(--sp-5) var(--sp-6) var(--sp-6);
+  overflow: hidden;             /* nie den ganzen Dialog scrollen */
+}
+.expl-dialog__head {
+  flex: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sp-1) var(--sp-3);
+  margin: 0 var(--sp-10) var(--sp-4) 0;
+}
+.expl-dialog__title { font-size: var(--fs-2xl); }
+.expl-dialog__head .muted { font-size: var(--fs-sm); }
+
+/* Bühne links, Erklärkarte rechts. Die Zeile darf schrumpfen (minmax(0, …)). */
+.expl {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(300px, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  gap: var(--sp-5);
+}
+
+/* ---------- Bühne (SVG-Animation) ---------- */
+.expl-stage {
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sp-2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--surface-sunken);
+}
+/* Breite 100 %, Höhe höchstens die der Bühne – viewBox sorgt für das Seitenverhältnis */
+.expl-stage svg { width: 100%; height: 100%; max-height: 100%; }
+
+.expl-stage .ring       { fill: none; stroke: var(--ring); stroke-width: 2; }
+.expl-stage .ring.outer { stroke: var(--accent); stroke-width: 2.6; filter: drop-shadow(0 0 4px rgba(34, 211, 238, 0.6)); }
+.expl-stage .ring.dim   { opacity: 0.35; }
+.expl-stage .e          { fill: var(--e); stroke: var(--e-stroke); stroke-width: 1.5; }
+.expl-stage .seat       { fill: none; stroke: var(--e); stroke-width: 1.6; stroke-dasharray: 2.5 2.5; animation: expl-blink 1s ease-in-out infinite; }
+@keyframes expl-blink { 50% { opacity: 0.25; } }
+.expl-stage .sym        { fill: var(--text); font-family: var(--font); font-size: 20px; font-weight: 800; text-anchor: middle; }
+.expl-stage .count      { fill: var(--text-muted); font-family: var(--font); font-size: 14px; text-anchor: middle; }
+.expl-stage .count.full { fill: var(--success); font-weight: 700; }
+.expl-stage .note       { fill: var(--text); font-family: var(--font); font-size: 15px; text-anchor: middle; }
+.expl-stage .note.small { fill: var(--text-muted); font-size: 13px; }
+.expl-stage .charge     { font-family: var(--font); font-size: 22px; font-weight: 900; text-anchor: middle; }
+.expl-stage .pair       { fill: rgba(251, 191, 36, 0.12); stroke: var(--e); stroke-width: 1.5; stroke-dasharray: 4 3; }
+.expl-stage .big       { fill: var(--text); font-family: var(--font); font-weight: 800; text-anchor: middle; }
+.expl-stage .lsym      { fill: var(--text); font-family: var(--font); font-weight: 800; text-anchor: middle; dominant-baseline: central; }
+.expl-stage .octet     { fill: none; stroke: var(--success); stroke-width: 2; stroke-dasharray: 5 4; }
+.expl-stage .glow      { filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.95)); }
+.expl-stage .vline     { stroke: var(--text); stroke-width: 3.5; stroke-linecap: round; }
+
+/* ---------- Mini-Periodensystem (D.miniTable) ----------
+   Zellen sind grau. Klassen färben sie: on = Stoffgruppe (data-cat → --accent), row/col = Zeile/Spalte,
+   hot = ein einzelnes Element, dim = in den Hintergrund. */
+.expl-stage .pt rect   { fill: #334155; transition: fill 0.35s ease, opacity 0.35s ease; }
+.expl-stage .pt-sym    { fill: #94a3b8; font-family: var(--font); font-size: 10px; font-weight: 700; text-anchor: middle; dominant-baseline: central; pointer-events: none; transition: fill 0.35s ease; }
+.expl-stage .pt.on rect  { fill: var(--accent); }
+.expl-stage .pt.row rect { fill: var(--pt-row); }
+.expl-stage .pt.col rect { fill: var(--pt-col); }
+.expl-stage .pt.row.col rect,
+.expl-stage .pt.hot rect { fill: #ffffff; }
+.expl-stage .pt.on .pt-sym, .expl-stage .pt.row .pt-sym, .expl-stage .pt.col .pt-sym, .expl-stage .pt.hot .pt-sym { fill: var(--on-accent); }
+.expl-stage .pt.dim rect { opacity: 0.35; }
+.expl-stage .pt-label  { fill: var(--text-muted); font-family: var(--font); font-size: 12px; font-weight: 700; text-anchor: middle; dominant-baseline: central; }
+
+/* ---------- Erklärkarte ---------- */
+.expl-card {
+  container-type: inline-size;   /* Navigation passt sich der Kartenbreite an (siehe @container unten) */
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: var(--sp-4) var(--sp-5);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--surface-sunken);
+}
+
+/* Kopf: Erzähler-Hamster neben Schrittnummer und Titel */
+.expl-card__head { flex: none; display: flex; align-items: center; gap: var(--sp-3); margin-bottom: var(--sp-3); }
+.expl-narrator { flex: none; width: 64px; height: 64px; }
+.expl-narrator .hamster-stage { width: 64px; height: 64px; }
+.expl-card__step { color: var(--accent); }
+.expl-card__title { margin-top: 2px; font-size: var(--fs-xl); }
+
+/* Alle Schritt-Texte liegen übereinander: Die Karte ist so hoch wie der längste,
+   beim Blättern springt nichts. Reicht der Platz nicht, scrollt nur dieser Bereich. */
+.expl-steps {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  display: grid;
+  align-content: start;
+  font-size: 0.97rem;
+}
+.expl-steps > section { grid-area: 1 / 1; visibility: hidden; }
+.expl-steps > section.on { visibility: visible; }
+.expl-steps p { line-height: 1.55; }
+.expl-steps p + p { margin-top: var(--sp-2); }
+.expl-steps .hint { color: var(--text-muted); font-size: var(--fs-sm); }
+.expl-steps b { color: var(--mark); }
+
+.expl-nav {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  margin-top: var(--sp-4);
+  padding-top: var(--sp-3);
+  border-top: 1px solid var(--border);
+}
+.expl-nav { flex-wrap: wrap; }
+.expl-nav .btn { white-space: nowrap; }
+/* Am letzten Schritt: „Weiter mit …“ zur nächsten Erklärung als breiter Knopf in eigener Zeile */
+.expl-nav .btn.is-chain { order: 10; flex: 1 1 100%; }
+.expl-nav .btn.is-done { --accent: var(--success); }
+.expl-dots { display: flex; gap: 6px; }
+.expl-dots span { width: 9px; height: 9px; border-radius: 50%; background: var(--border-strong); }
+.expl-dots span.on { background: var(--accent); }
+
+/* Mittlere Breite: beide Spalten gleich breit, damit der Text Platz hat */
+@media (max-width: 1100px) {
+  .expl { grid-template-columns: minmax(0, 1fr) minmax(300px, 1fr); }
+}
+
+/* Schmale Karte: Punkte ausblenden (Fortschritt steht als „Schritt x von 6“ im Kopf), Knöpfe kompakter */
+@container (max-width: 400px) {
+  .expl-dots { display: none; }
+  .expl-nav { gap: var(--sp-1); }
+  .expl-nav .btn { padding: var(--sp-2) var(--sp-3); }
+}
+
+/* ---------- Schmal im Hochformat: untereinander, Dialog nutzt die ganze Höhe ----------
+   (schmal im Querformat bleibt es nebeneinander, dort ist die Höhe knapp) */
+@media (max-width: 860px) and (orientation: portrait), (max-width: 560px) {
+  .expl-dialog { height: calc(100dvh - 2 * var(--sp-3)); max-height: none; padding: var(--sp-4); }
+  .expl {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: var(--sp-3);
+  }
+  /* Bühne nur so hoch wie die Zeichnung, der Rest gehört dem Text */
+  .expl-stage svg { height: auto; max-height: 34dvh; }
+  .expl-dialog__head .muted { display: none; }
+}
+@media (max-width: 420px) {
+  .expl-card { padding: var(--sp-3); }
+}
+
+/* ---------- Binomische Formeln: Flächen & Formeltext ---------- */
+.expl-stage .area        { stroke: none; }
+.expl-stage .area-blue   { fill: var(--blue); }
+.expl-stage .area-amber  { fill: var(--amber); }
+.expl-stage .area-green  { fill: var(--green); }
+.expl-stage .area-red    { fill: var(--red); }
+.expl-stage .area-orange { fill: var(--orange); }
+
+.expl-stage .area-label      { fill: var(--on-accent); font-family: var(--font); font-size: 17px; font-weight: 700; text-anchor: middle; dominant-baseline: central; }
+.expl-stage .area-label--nr  { font-size: 22px; font-weight: 900; }
+
+.expl-stage .formula     { fill: var(--text-strong); font-family: var(--font); font-size: 20px; font-weight: 700; dominant-baseline: central; }
+.expl-stage .formula-nr  { fill: var(--accent); font-family: var(--font); font-size: 26px; font-weight: 900; text-anchor: middle; dominant-baseline: central; }
+.expl-stage .formula-tag { fill: var(--text-muted); font-family: var(--font); font-size: 13px; dominant-baseline: central; }
+
+.expl-stage .col-head    { fill: var(--text-muted); font-family: var(--font); font-size: 14px; font-weight: 700; text-anchor: middle; }
+.expl-stage .num-step    { fill: var(--text); font-family: var(--font); font-size: 22px; text-anchor: middle; dominant-baseline: central; }
+.expl-stage .num-result  { fill: var(--success); font-family: var(--font); font-size: 30px; font-weight: 900; text-anchor: middle; dominant-baseline: central; }
+.expl-stage .num-eq      { fill: var(--success); font-family: var(--font); font-size: 30px; font-weight: 900; text-anchor: middle; dominant-baseline: central; }
+.expl-stage .num-done    { fill: var(--success); font-family: var(--font); font-size: 16px; font-weight: 700; text-anchor: middle; }
+.expl-stage .sep         { stroke: var(--border-strong); stroke-width: 1.5; }

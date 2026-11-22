@@ -1,0 +1,143 @@
+/* Hamster-Maskottchen 1.0 – Styles (die Animation läuft in hamster.js)
+ *
+ * Anpassen über CSS-Variablen, z. B. auf :root oder einem Eltern-Element:
+ *   --hamster-size          Größe des Ergebnis-Hamsters            (160px)
+ *   --hamster-label-color   Farbe des Ergebnis-Texts               (var(--text) bzw. #e2e8f0)
+ *   --hamster-tip-size      Größe des Tipp-Hamsters                (130px)
+ *   --hamster-tip-left      Abstand vom linken Rand                (8px)
+ *   --hamster-tip-bottom    Abstand vom unteren Rand               (0px)
+ *   --hamster-z             Ebene des Tipp-Hamsters (z-index)      (9)
+ *   --hamster-bubble-bg     Hintergrund der Sprechblase            (#fffdf7)
+ *   --hamster-bubble-text   Textfarbe der Sprechblase              (#1e293b)
+ *   --hamster-accent        Überschrift + Schreibmarke             (#d97706)
+ *   --hamster-button-bg     Knopf „Noch ein Tipp“                  (#fbbf24)
+ */
+
+/* ---- Ergebnis-Hamster ---- */
+.hamster-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 3rem auto 0.6rem;
+}
+.hamster-stage {
+  position: relative;
+  width: var(--hamster-size, 160px);
+  height: var(--hamster-size, 160px);
+}
+.hamster-stage > svg {
+  display: block; width: 100%; height: 100%;
+  overflow: visible; pointer-events: none;
+}
+.hamster-fx { position: absolute; inset: 0; pointer-events: none; }
+.hamster-fx i { position: absolute; left: 0; top: 0; display: block; font-style: normal; will-change: transform; }
+.hamster-confetti { width: 7px; height: 11px; margin: -5px 0 0 -3px; border-radius: 2px; }
+.hamster-confetti--round { width: 8px; height: 8px; border-radius: 50%; }
+.hamster-twinkle {
+  font-size: 18px; line-height: 1; margin: -9px 0 0 -9px;
+  color: #fde047; text-shadow: 0 0 8px rgba(253, 224, 71, 0.7);
+  opacity: 0;
+}
+
+.hamster-label {
+  font-size: 1.15rem;
+  font-weight: 800;
+  margin: 0.9rem 0 0;
+  color: var(--hamster-label-color, var(--text, #e2e8f0));
+  animation: hLabel 0.5s cubic-bezier(.34, 1.56, .64, 1) 0.45s both;
+}
+@keyframes hLabel {
+  from { transform: translateY(8px) scale(.6); opacity: 0; }
+  to   { transform: none; opacity: 1; }
+}
+
+/* ---- Tipp-Hamster ---- */
+.hamster-tip {
+  --_size: var(--hamster-tip-size, 130px);
+  --_bubble: var(--hamster-bubble-bg, #fffdf7);
+  position: fixed;
+  left: var(--hamster-tip-left, 8px);
+  bottom: var(--hamster-tip-bottom, 0px);
+  z-index: var(--hamster-z, 9);
+  width: var(--_size); height: var(--_size);
+  pointer-events: none;
+}
+.hamster-tip--inline { position: absolute; }   /* in einem Container statt am Fensterrand */
+.hamster-tip__hamster {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  margin: 0; padding: 0; border: 0; background: none;
+  pointer-events: none;               /* nur die Figur selbst ist klickbar */
+}
+.hamster-tip__hamster .h-root { pointer-events: visiblePainted; cursor: pointer; }
+.hamster-tip__hamster:focus-visible { outline: 3px solid #22d3ee; outline-offset: -8px; border-radius: 18px; }
+
+.hamster-tip__bubble {
+  position: absolute;
+  left: calc(var(--_size) * 0.86); bottom: calc(var(--_size) * 0.45);
+  width: max-content; max-width: min(300px, calc(100vw - var(--_size) - 10px));
+  padding: 0.75rem 1rem 0.85rem;
+  border-radius: 16px 16px 16px 6px;
+  background: var(--_bubble); color: var(--hamster-bubble-text, #1e293b);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  font-size: 0.95rem; line-height: 1.45;
+  pointer-events: auto;
+  transform-origin: 0% 100%;
+  transform: scale(.3) translate(-20px, 20px); opacity: 0; visibility: hidden;
+  transition: transform .3s ease-in, opacity .2s ease-in, visibility 0s .3s;
+}
+.hamster-tip.is-open .hamster-tip__bubble {
+  transform: none; opacity: 1; visibility: visible;
+  transition: transform .45s cubic-bezier(.34, 1.56, .64, 1), opacity .2s ease-out, visibility 0s;
+}
+.hamster-tip__bubble::after {
+  content: ""; position: absolute; left: -10px; bottom: 8px;
+  border: 10px solid transparent; border-left: 0; border-right-color: var(--_bubble);
+}
+.hamster-tip__title {
+  margin: 0 1.6rem 0.2rem 0;
+  font-size: 0.72rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--hamster-accent, #d97706);
+}
+.hamster-tip__text { display: grid; margin: 0 0 0.6rem; }
+.hamster-tip__text > span { grid-area: 1 / 1; }
+.hamster-tip__ghost { visibility: hidden; }   /* reserviert die endgültige Größe beim Tippen */
+.hamster-tip.is-typing .hamster-tip__typed::after {
+  content: ""; display: inline-block; width: 2px; height: 1em; margin-left: 2px;
+  vertical-align: -0.15em; background: var(--hamster-accent, #d97706);
+  animation: hCaret .6s steps(1) infinite;
+}
+@keyframes hCaret { 50% { opacity: 0; } }
+.hamster-tip__close {
+  position: absolute; top: 0.3rem; right: 0.4rem;
+  padding: 0.15rem 0.4rem; border: 0; border-radius: 8px; background: none;
+  font-size: 1.3rem; line-height: 1; color: #94a3b8; cursor: pointer;
+}
+.hamster-tip__close:hover { color: #1e293b; background: #f1f5f9; }
+.hamster-tip__more {
+  padding: 0.35rem 0.85rem; border: 0; border-radius: 999px;
+  background: var(--hamster-button-bg, #fbbf24); color: #0f172a;
+  font: inherit; font-size: 0.82rem; font-weight: 700; cursor: pointer;
+  transition: transform .12s ease, filter .12s ease;
+}
+.hamster-tip__more:hover { transform: translateY(-1px); filter: brightness(.95); }
+.hamster-sr {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+/* schmale Bildschirme: Blase über dem Hamster */
+@media (max-width: 520px) {
+  .hamster-tip__bubble {
+    left: 4px; bottom: calc(var(--_size) * 0.98);
+    max-width: calc(100vw - 32px);
+  }
+  .hamster-tip__bubble::after {
+    left: 40px; bottom: -10px;
+    border: 10px solid transparent; border-bottom: 0; border-top-color: var(--_bubble);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hamster-label, .hamster-tip__bubble { animation: none; transition: none; }
+  .hamster-twinkle { display: none; }
+}

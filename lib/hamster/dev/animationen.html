@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hamster – Animationen</title>
+  <link rel="stylesheet" href="../hamster.css">
+  <style>
+    :root {
+      --bg: #0f172a; --bg-soft: #1e293b; --line: #334155;
+      --text: #e2e8f0; --text-dim: #94a3b8; --accent: #22d3ee;
+    }
+    body.light {
+      --bg: #f1f5f9; --bg-soft: #ffffff; --line: #cbd5e1;
+      --text: #0f172a; --text-dim: #64748b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; padding: 1.5rem clamp(1rem, 4vw, 3rem) 3rem;
+      background: var(--bg); color: var(--text);
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      transition: background .2s, color .2s;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    header { display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem 1.5rem; margin-bottom: 1.2rem; }
+    h1 { margin: 0; font-size: 1.6rem; }
+    h2 { font-size: 1rem; color: var(--text-dim); font-weight: 600; margin: 2.4rem 0 .8rem; }
+
+    .toolbar, .actions { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; }
+    .toolbar { position: sticky; top: 0; z-index: 20; padding: .6rem 0; background: var(--bg); }
+    button.btn {
+      font: inherit; font-size: .9rem; font-weight: 600;
+      padding: .45rem .9rem; border-radius: 10px; cursor: pointer;
+      background: var(--bg-soft); color: var(--text); border: 1px solid var(--line);
+    }
+    button.btn:hover { border-color: var(--accent); }
+    button.btn[aria-pressed="true"] { background: var(--accent); color: #0f172a; border-color: var(--accent); }
+    .seg { display: inline-flex; }
+    .seg .btn { border-radius: 0; }
+    .seg .btn:first-child { border-radius: 10px 0 0 10px; }
+    .seg .btn:last-child  { border-radius: 0 10px 10px 0; }
+    .toolbar .label { font-size: .8rem; color: var(--text-dim); margin-left: .4rem; }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 1rem; }
+    .grid--small { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); }
+    .card {
+      position: relative; background: var(--bg-soft); border: 1px solid var(--line);
+      border-radius: 16px; padding: .9rem 1rem 1rem; text-align: center; overflow: hidden;
+    }
+    .card__head { display: flex; justify-content: space-between; align-items: flex-start; gap: .5rem; text-align: left; }
+    .card__name { font-weight: 700; font-family: ui-monospace, monospace; font-size: .88rem; }
+    .card__desc { font-size: .8rem; color: var(--text-dim); margin-top: .15rem; }
+    .card__replay {
+      font: inherit; font-size: 1rem; line-height: 1; padding: .3rem .45rem; border-radius: 8px; flex: none;
+      background: transparent; color: var(--text-dim); border: 1px solid var(--line); cursor: pointer;
+    }
+    .card__replay:hover { color: var(--text); border-color: var(--accent); }
+    .card__stage { min-height: 280px; display: flex; align-items: flex-end; justify-content: center; }
+    .grid--small .card__stage { min-height: 190px; padding-bottom: .4rem; }
+    .grid--small .hamster-stage { width: 120px; height: 120px; }
+
+    .tipdemo {
+      position: relative; height: 360px; overflow: hidden;
+      background: var(--bg-soft); border: 1px solid var(--line); border-radius: 16px;
+      margin-top: .8rem;
+    }
+    .tipdemo__hint { position: absolute; right: 1rem; top: .8rem; max-width: 46%; font-size: .85rem; color: var(--text-dim); text-align: right; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Hamster – Animationen</h1>
+    <a href="gefuehle.html">Gefühle (statisch) &#8594;</a> <a href="../example.html">Beispiel</a>
+  </header>
+
+  <div class="toolbar">
+    <button type="button" class="btn" id="replayAll">&#8635; Alle neu abspielen</button>
+    <button type="button" class="btn" id="pause" aria-pressed="false">&#10074;&#10074; Pause</button>
+    <span class="label">Tempo</span>
+    <span class="seg" id="speed">
+      <button type="button" class="btn" data-rate="1" aria-pressed="true">1×</button>
+      <button type="button" class="btn" data-rate="0.5" aria-pressed="false">½×</button>
+      <button type="button" class="btn" data-rate="0.25" aria-pressed="false">¼×</button>
+    </span>
+    <button type="button" class="btn" id="theme" aria-pressed="false">Heller Hintergrund</button>
+  </div>
+
+  <h2>Quiz-Ergebnis – mit Auftritt, danach Endlosschleife</h2>
+  <div class="grid" id="moods"></div>
+
+  <h2>Tipp-Hamster – live zum Ausprobieren</h2>
+  <div class="actions">
+    <button type="button" class="btn" id="tipGreet">Begrüßung</button>
+    <button type="button" class="btn" id="tipNext">Nächster Tipp</button>
+    <button type="button" class="btn" id="tipClose">Schließen</button>
+  </div>
+  <div class="tipdemo" id="tipdemo">
+    <p class="tipdemo__hint">Auf den Hamster klicken = neuer Tipp.<br>Nach „Schließen“ lugt er unten über den Rand – seine Augen folgen der Maus.</p>
+  </div>
+
+  <h2>Alle Clips einzeln (Schleife)</h2>
+  <div class="grid grid--small" id="clips"></div>
+
+  <script src="../hamster.js"></script>
+  <script>
+    (function () {
+      const MOODS = {
+        sad:     "0–4 richtig",
+        ok:      "5–7 richtig",
+        great:   "8–9 richtig",
+        perfect: "10 von 10"
+      };
+      const CLIPS = [
+        ["intro_ok",     "Auftritt: fällt herein, staucht, federt"],
+        ["intro_sad",    "Auftritt traurig: plumpst herunter"],
+        ["sad",          "Tränen steigen, Schluchzer, Auge reiben, flehender Blick"],
+        ["ok",           "Umschauen, Kopf schief + Winken, Fußtippen"],
+        ["great",        "Zwei Hopser, Freudentanz, Winken"],
+        ["perfect",      "Salto, Konfetti, Jubel, Hände in die Hüften"],
+        ["tipEnter",     "Tipp: springt von unten ins Bild"],
+        ["tipTalk",      "Tipp: erzählt und zeigt auf die Blase"],
+        ["tipHop",       "Tipp: Hüpfer vor dem nächsten Tipp"],
+        ["tipBye",       "Tipp: winkt und taucht ab"],
+        ["tipPeek",      "Tipp: lugt über den Rand"],
+        ["tipPopUp",     "Tipp: springt aus dem Versteck"],
+        ["idleLook",     "Leerlauf: schaut sich neugierig um"],
+        ["idleScratch",  "Leerlauf: kratzt sich die Backe"],
+        ["idleYawn",     "Leerlauf: gähnt und streckt sich"]
+      ];
+
+      function card(parent, name, desc, start) {
+        const el = document.createElement("div");
+        el.className = "card";
+        el.innerHTML =
+          '<div class="card__head"><div><div class="card__name">' + name + "</div>" +
+          '<div class="card__desc">' + desc + "</div></div>" +
+          '<button type="button" class="card__replay" title="Neu abspielen">&#8635;</button></div>' +
+          '<div class="card__stage"></div>';
+        parent.appendChild(el);
+        const stage = el.querySelector(".card__stage");
+        function play() { start(stage); }
+        el.querySelector(".card__replay").addEventListener("click", play);
+        play();
+        return play;
+      }
+
+      const replays = [];
+      Object.keys(MOODS).forEach(function (m) {
+        replays.push(card(document.getElementById("moods"), m, MOODS[m], function (stage) {
+          Hamster.show(stage, m === "perfect" ? 10 : m === "great" ? 9 : m === "ok" ? 6 : 2, 10);
+        }));
+      });
+      CLIPS.forEach(function (c) {
+        replays.push(card(document.getElementById("clips"), c[0], c[1], function (stage) {
+          stage.innerHTML = '<div class="hamster-stage"></div>';
+          Hamster.create(stage.firstChild, { clip: c[0], hold: 0.6 });
+        }));
+      });
+
+      // Tipp-Hamster in der Demo-Box
+      const GREETING = "Hallo! Ich bin dein Lern-Hamster. Klick mich an, wenn du einen Tipp brauchst!";
+      const tip = Hamster.tips({
+        container: document.getElementById("tipdemo"),
+        remember: false, delay: 400, greeting: GREETING,
+        tips: [
+          "Metall + Nichtmetall? Dann ist es eine Ionenbindung.",
+          "Die Hauptgruppen-Nummer verrät die Zahl der Außenelektronen.",
+          "Edelgase haben eine volle Außenschale. Deshalb reagieren sie kaum.",
+          "Quiz-Trick: Prüf zuerst, ob ein Metall dabei ist. Das spart Zeit!"
+        ]
+      });
+      document.getElementById("tipGreet").addEventListener("click", function () { tip.tell(GREETING, "Hallo!"); });
+      document.getElementById("tipNext").addEventListener("click", function () { tip.tell(); });
+      document.getElementById("tipClose").addEventListener("click", function () { tip.close(); });
+
+      // Toolbar
+      document.getElementById("replayAll").addEventListener("click", function () {
+        replays.forEach(function (r) { r(); });
+      });
+      const pauseBtn = document.getElementById("pause");
+      let paused = false;
+      pauseBtn.addEventListener("click", function () {
+        paused = !paused;
+        Hamster.setPaused(paused);
+        pauseBtn.setAttribute("aria-pressed", String(paused));
+        pauseBtn.innerHTML = paused ? "&#9654; Weiter" : "&#10074;&#10074; Pause";
+      });
+      document.querySelectorAll("#speed .btn").forEach(function (b) {
+        b.addEventListener("click", function () {
+          Hamster.setSpeed(parseFloat(b.dataset.rate));
+          document.querySelectorAll("#speed .btn").forEach(function (x) {
+            x.setAttribute("aria-pressed", String(x === b));
+          });
+        });
+      });
+      const themeBtn = document.getElementById("theme");
+      themeBtn.addEventListener("click", function () {
+        themeBtn.setAttribute("aria-pressed", String(document.body.classList.toggle("light")));
+      });
+    })();
+  </script>
+</body>
+</html>

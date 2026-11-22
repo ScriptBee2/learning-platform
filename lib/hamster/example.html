@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hamster – Beispiel</title>
+
+  <!-- 1. Stylesheet einbinden -->
+  <link rel="stylesheet" href="hamster.css">
+
+  <style>
+    body {
+      margin: 0; padding: 2rem 1.5rem 10rem;
+      background: #0f172a; color: #e2e8f0;
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    }
+    main { max-width: 640px; margin: 0 auto; }
+    h1 { margin: 0 0 .3rem; }
+    p { color: #94a3b8; line-height: 1.5; }
+    .box { background: #1e293b; border-radius: 16px; padding: 1rem 1.2rem 1.4rem; margin-top: 1.2rem; text-align: center; }
+    .buttons { display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center; }
+    button.demo {
+      font: inherit; font-weight: 600; padding: .45rem .9rem; border-radius: 10px; cursor: pointer;
+      background: #0f172a; color: #e2e8f0; border: 1px solid #334155;
+    }
+    button.demo:hover { border-color: #22d3ee; }
+    pre { text-align: left; background: #0b1222; border-radius: 10px; padding: .9rem 1rem; overflow-x: auto; font-size: .85rem; color: #cbd5e1; }
+    a { color: #22d3ee; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Hamster – Beispiel</h1>
+    <p>Diese Seite zeigt, wie man den Hamster einbindet. Sie funktioniert auch direkt von der Festplatte.
+      Alle Animationen im Überblick: <a href="dev/animationen.html">dev/animationen.html</a>.</p>
+
+    <!-- 2. Ergebnis-Hamster: ein leerer Container genügt -->
+    <div class="box">
+      <div class="buttons">
+        <button type="button" class="demo" data-score="2">2 von 10</button>
+        <button type="button" class="demo" data-score="6">6 von 10</button>
+        <button type="button" class="demo" data-score="9">9 von 10</button>
+        <button type="button" class="demo" data-score="10">10 von 10</button>
+      </div>
+      <div id="ergebnis"></div>
+    </div>
+
+    <div class="box">
+      <div class="buttons">
+        <button type="button" class="demo" id="tipp">Tipp zeigen</button>
+        <button type="button" class="demo" id="schliessen">Tipp schließen</button>
+      </div>
+      <p>Der Tipp-Hamster sitzt unten links. Klick auf ihn zeigt den nächsten Tipp.</p>
+    </div>
+
+    <pre><code>&lt;link rel="stylesheet" href="hamster/hamster.css"&gt;
+&lt;script src="hamster/hamster.js"&gt;&lt;/script&gt;
+
+&lt;div id="ergebnis"&gt;&lt;/div&gt;
+&lt;script&gt;
+  Hamster.show(document.getElementById("ergebnis"), 7, 10);
+
+  const tipp = Hamster.tips({
+    tips: ["Erster Tipp …", "Zweiter Tipp …"],
+    greeting: "Hallo! Klick mich an, wenn du einen Tipp brauchst!"
+  });
+&lt;/script&gt;</code></pre>
+  </main>
+
+  <!-- 3. Script einbinden – stellt das globale Objekt "Hamster" bereit -->
+  <script src="hamster.js"></script>
+  <script>
+    const ergebnis = document.getElementById("ergebnis");
+
+    // Ergebnis-Hamster: Stimmung ergibt sich aus Punkten / Gesamt
+    Hamster.show(ergebnis, 9, 10);
+    document.querySelectorAll("[data-score]").forEach(function (b) {
+      b.addEventListener("click", function () { Hamster.show(ergebnis, Number(b.dataset.score), 10); });
+    });
+
+    // Tipp-Hamster: begrüßt beim ersten Besuch (pro Sitzung), danach lugt er über den Rand
+    const tipp = Hamster.tips({
+      tips: [
+        "Kurze Pausen helfen beim Lernen – alle 25 Minuten fünf Minuten durchatmen.",
+        "Erklär den Stoff jemand anderem. Was du erklären kannst, hast du verstanden.",
+        "Lieber jeden Tag ein bisschen üben als einmal ganz viel."
+      ],
+      greeting: "Hallo! Ich bin dein Lern-Hamster. Klick mich an, wenn du einen Tipp brauchst!",
+      storageKey: "hamster-beispiel"
+    });
+    document.getElementById("tipp").addEventListener("click", function () { tipp.tell(); });
+    document.getElementById("schliessen").addEventListener("click", function () { tipp.close(); });
+  </script>
+</body>
+</html>

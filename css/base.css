@@ -1,0 +1,698 @@
+/* =====================================================================
+   Lernzentrum – Basis-Styles
+   Tokens, Grundlayout und alle gemeinsamen Bausteine.
+   Regeln und Beispiele: siehe DESIGN.md
+   Seiten-CSS (z. B. periodensystem.css) enthält NUR seitenspezifische Teile.
+   ===================================================================== */
+
+/* ---------- 1. Tokens ---------- */
+:root {
+  /* Flächen */
+  --bg:            #0f172a;
+  --surface:       #1e293b;
+  --surface-sunken: rgba(255, 255, 255, 0.04);
+  --surface-hover:  rgba(148, 163, 184, 0.12);
+  --border:        rgba(148, 163, 184, 0.2);
+  --border-strong: rgba(148, 163, 184, 0.4);
+
+  /* Text */
+  --text:        #e2e8f0;
+  --text-muted:  #94a3b8;
+  --text-strong: #ffffff;
+  --on-accent:   #0f172a;   /* Text auf farbigen Flächen */
+
+  /* Palette (Akzentfarben) */
+  --blue:   #60a5fa;
+  --cyan:   #22d3ee;
+  --green:  #10b981;
+  --amber:  #f59e0b;
+  --yellow: #fbbf24;
+  --orange: #fb923c;
+  --red:    #f87171;
+  --purple: #c084fc;
+  --indigo: #6366f1;
+
+  /* Fächer */
+  --c-mathe:  var(--indigo);
+  --c-chemie: var(--green);
+
+  /* Rückmeldung */
+  --success:      #6ee7b7;
+  --danger:       #f87171;
+  --danger-text:  #fca5a5;
+
+  /* Akzent der aktuellen Komponente – wird lokal überschrieben */
+  --accent: var(--cyan);
+
+  /* Abstände (4-px-Raster) */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+  --sp-10: 40px;
+  --sp-12: 48px;
+
+  /* Schrift */
+  --font: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --fs-xs:  0.75rem;   /* 12 px: Eyebrow, Zähler */
+  --fs-sm:  0.875rem;  /* 14 px: Hinweise, Bildunterschriften */
+  --fs-md:  1rem;      /* 16 px: Fließtext */
+  --fs-lg:  1.125rem;  /* 18 px: hervorgehobener Text */
+  --fs-xl:  1.25rem;   /* 20 px: Abschnittstitel */
+  --fs-2xl: 1.5rem;    /* 24 px: Dialogtitel */
+  --fs-3xl: clamp(1.5rem, 3.5vw, 2rem);      /* Seitentitel */
+  --fs-hero: clamp(2rem, 6vw, 3.5rem);       /* Start- und Übersichtsseiten */
+  --lh-tight:   1.2;
+  --lh-normal:  1.5;
+  --lh-relaxed: 1.65;
+
+  /* Formen */
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 16px;
+  --r-xl: 20px;
+  --r-2xl: 24px;
+  --r-pill: 999px;
+
+  --shadow-sm: 0 4px 14px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 25px 60px rgba(0, 0, 0, 0.55);
+
+  /* Bewegung */
+  --t-fast: 0.15s ease;
+  --t-base: 0.25s ease;
+
+  /* Ebenen */
+  --z-raised:  2;
+  --z-back:    5;
+  --z-sidebar: 8;
+  --z-float:   9;    /* Tipp-Hamster, Bindungs-Banner */
+  --z-overlay: 10;
+  --z-tooltip: 20;
+
+  /* Layout */
+  --page-pad:  var(--sp-4);
+  --sidebar-w: 260px;
+  --content-max: 1100px;
+
+  /* Hamster-Maskottchen (lib/hamster) an das Design anbinden */
+  --hamster-label-color: var(--text);
+  --hamster-size: 150px;
+  --hamster-tip-size: 120px;
+  --hamster-z: var(--z-float);
+
+  color-scheme: dark;
+}
+
+/* Akzent-Hilfsklassen: setzen --accent für ein Element und alle Kinder */
+.accent-blue   { --accent: var(--blue); }
+.accent-cyan   { --accent: var(--cyan); }
+.accent-green  { --accent: var(--green); }
+.accent-amber  { --accent: var(--amber); }
+.accent-yellow { --accent: var(--yellow); }
+.accent-orange { --accent: var(--orange); }
+.accent-red    { --accent: var(--red); }
+.accent-purple { --accent: var(--purple); }
+.accent-indigo { --accent: var(--indigo); }
+.accent-mathe  { --accent: var(--c-mathe); }
+.accent-chemie { --accent: var(--c-chemie); }
+
+/* ---------- 2. Reset & Grundlagen ---------- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+[hidden] { display: none !important; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  min-height: 100vh;
+  font-family: var(--font);
+  font-size: var(--fs-md);
+  line-height: var(--lh-normal);
+  color: var(--text);
+  background: radial-gradient(circle at 20% 0%, var(--surface), var(--bg) 60%) fixed;
+  background-color: var(--bg);
+}
+
+h1, h2, h3 { line-height: var(--lh-tight); font-weight: 800; }
+button, input { font: inherit; color: inherit; }
+button { cursor: pointer; }
+a { color: inherit; }
+svg { display: block; }
+strong { color: var(--text-strong); font-weight: 700; }
+
+:focus-visible { outline: 3px solid var(--cyan); outline-offset: 2px; }
+
+.muted   { color: var(--text-muted); }
+.sr-only {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap;
+}
+.eyebrow {
+  display: block;
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ---------- 3. Seitenrahmen ---------- */
+/* Jede Seite: <body class="page page--…">. */
+.page { padding: var(--page-pad); }
+
+/* Start- und Übersichtsseiten: Inhalt mittig */
+.page--hub {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-10);
+  padding: var(--sp-8);
+}
+
+/* Werkzeug-Seiten, die genau in das Fenster passen (z. B. Periodensystem) */
+.page--fit {
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Lese-Seiten mit normalem Scrollen */
+.page--scroll {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 120px;   /* Platz für den Tipp-Hamster unten links */
+}
+
+/* Seiten mit Seitenleiste rechts: Platz freihalten */
+.page--with-sidebar {
+  padding-right: calc(var(--page-pad) + var(--sidebar-w));
+  transition: padding-right var(--t-base);
+}
+.page--with-sidebar:has(.sidebar--collapsed) { padding-right: var(--page-pad); }
+
+/* Inhaltsspalte */
+.container {
+  width: 100%;
+  max-width: var(--content-max);
+  margin: 0 auto;
+}
+
+/* ---------- 4. Kopfbereich ---------- */
+.back {
+  position: fixed;
+  top: var(--sp-4);
+  left: var(--sp-4);
+  z-index: var(--z-back);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-4);
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  color: var(--text);
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform var(--t-fast);
+}
+.back:hover { transform: translateX(-3px); }
+
+.topbar {
+  flex: 0 0 auto;
+  margin-bottom: var(--sp-6);
+  text-align: center;
+}
+.topbar__title { font-size: var(--fs-3xl); letter-spacing: -0.01em; }
+.topbar__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: var(--sp-2) var(--sp-6);
+}
+.topbar__hint { color: var(--text-muted); font-size: var(--fs-sm); }
+
+.hero { text-align: center; }
+.hero__title { font-size: var(--fs-hero); letter-spacing: -0.02em; }
+.hero__subtitle { margin-top: var(--sp-2); font-size: var(--fs-lg); color: var(--text-muted); }
+
+.page-foot { color: var(--text-muted); font-size: var(--fs-sm); text-align: center; }
+
+/* ---------- 5. Auswahl-Karten (Start- und Übersichtsseiten) ---------- */
+.choices {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--sp-8);
+  width: 100%;
+  max-width: 760px;
+}
+
+.choice {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-10) var(--sp-6);
+  border: 2px solid transparent;
+  border-radius: var(--r-2xl);
+  background: var(--surface);
+  box-shadow: var(--shadow-md);
+  color: var(--text);
+  text-align: center;
+  text-decoration: none;
+  transition: transform var(--t-fast), border-color var(--t-fast), box-shadow var(--t-fast);
+}
+a.choice:hover {
+  transform: translateY(-6px);
+  border-color: var(--accent);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+}
+.choice__icon {
+  display: grid;
+  place-items: center;
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 55%, #000));
+  color: #fff;
+  font-size: 2.6rem;
+  line-height: 1;
+}
+.choice__icon svg { width: 46px; height: 46px; }
+.choice__title { font-size: var(--fs-2xl); }
+.choice__text { color: var(--text-muted); }
+
+/* noch nicht verfügbar */
+.choice--soon { opacity: 0.55; box-shadow: none; cursor: default; }
+.choice--soon .choice__icon { filter: grayscale(0.6); }
+
+.badge {
+  display: inline-block;
+  margin-top: var(--sp-2);
+  padding: var(--sp-1) var(--sp-3);
+  border-radius: var(--r-pill);
+  background: rgba(148, 163, 184, 0.15);
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+.badge--ready {
+  background: color-mix(in srgb, var(--accent) 20%, transparent);
+  color: color-mix(in srgb, var(--accent) 55%, #fff);
+}
+
+/* ---------- 6. Knöpfe ---------- */
+/* .btn = Kontur-Knopf (Standard), .btn--primary = gefüllt in --accent */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  padding: var(--sp-3) var(--sp-4);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-md);
+  background: transparent;
+  color: var(--text);
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: var(--lh-tight);
+  text-align: center;
+  text-decoration: none;
+  transition: background var(--t-fast), border-color var(--t-fast), filter var(--t-fast), transform var(--t-fast);
+}
+.btn:hover { background: var(--surface-hover); border-color: rgba(148, 163, 184, 0.65); }
+.btn:disabled { opacity: 0.35; cursor: default; background: transparent; }
+
+.btn--primary {
+  border-color: transparent;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-weight: 700;
+}
+.btn--primary:hover { background: var(--accent); border-color: transparent; filter: brightness(1.08); }
+
+.btn--block { display: flex; width: 100%; }
+.btn--sm { padding: var(--sp-1) var(--sp-3); border-radius: var(--r-pill); font-size: var(--fs-sm); color: var(--text-muted); }
+.btn--sm:hover { color: var(--text); }
+
+.btn-row { display: flex; flex-wrap: wrap; gap: var(--sp-2); }
+.btn-stack { display: flex; flex-direction: column; gap: var(--sp-2); }
+
+/* Schließen-Kreuz oben rechts in Dialogen */
+.close {
+  position: absolute;
+  top: var(--sp-3);
+  right: var(--sp-3);
+  z-index: var(--z-back);
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: var(--r-sm);
+  background: none;
+  color: var(--text-muted);
+  font-size: 1.75rem;
+  line-height: 1;
+}
+.close:hover { color: var(--text); background: var(--surface-hover); }
+.close--on-accent { color: var(--on-accent); }
+.close--on-accent:hover { color: #000; background: rgba(255, 255, 255, 0.25); }
+
+/* ---------- 7. Seitenleiste ---------- */
+.sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: var(--z-sidebar);
+  width: var(--sidebar-w);
+  height: 100vh;
+  height: 100dvh;
+  background: var(--surface);
+  box-shadow: -8px 0 30px rgba(0, 0, 0, 0.4);
+  transition: transform var(--t-base);
+}
+.sidebar--collapsed { transform: translateX(100%); }
+.sidebar__toggle {
+  position: absolute;
+  top: 50%;
+  left: -34px;
+  width: 34px;
+  height: 64px;
+  border: 0;
+  border-radius: var(--r-md) 0 0 var(--r-md);
+  background: var(--surface);
+  box-shadow: -4px 0 14px rgba(0, 0, 0, 0.3);
+  color: var(--text);
+  font-size: 1.4rem;
+  transform: translateY(-50%);
+  transition: transform var(--t-base), color var(--t-fast);
+}
+.sidebar__toggle:hover { color: var(--text-strong); }
+.sidebar--collapsed .sidebar__toggle { transform: translateY(-50%) rotate(180deg); }
+.sidebar__content { height: 100%; overflow-y: auto; padding: var(--sp-6) var(--sp-5); }
+
+.panel + .panel { margin-top: var(--sp-8); }
+.panel__title {
+  margin-bottom: var(--sp-2);
+  padding-bottom: var(--sp-2);
+  border-bottom: 1px solid var(--border);
+  font-size: var(--fs-lg);
+}
+.panel__hint { margin-bottom: var(--sp-4); color: var(--text-muted); font-size: var(--fs-sm); }
+.panel .card-stack + .btn { margin-top: var(--sp-4); }
+
+/* Karteikasten: gestapelte Lernkarten-Reiter */
+.card-stack { display: flex; flex-direction: column; }
+.card-chip {
+  position: relative;
+  width: 100%;
+  margin-top: -12px;
+  padding: var(--sp-3) var(--sp-4) var(--sp-4);
+  border: 0;
+  border-radius: var(--r-md);
+  background: var(--accent);
+  box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.25), 0 6px 14px rgba(0, 0, 0, 0.3);
+  color: var(--on-accent);
+  font-weight: 700;
+  text-align: left;
+  transition: transform var(--t-fast), box-shadow var(--t-fast);
+}
+.card-chip:first-child { margin-top: 0; }
+.card-chip::before {   /* Reiter-Streifen */
+  content: "";
+  position: absolute;
+  top: 6px;
+  left: var(--sp-4);
+  right: var(--sp-4);
+  height: 2px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.35);
+}
+.card-chip:hover { z-index: var(--z-raised); transform: translateY(-5px); box-shadow: 0 12px 26px rgba(0, 0, 0, 0.4); }
+
+/* ---------- 8. Overlay & Dialoge ---------- */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sp-6);
+  background: rgba(15, 23, 42, 0.72);
+  backdrop-filter: blur(3px);
+}
+
+.dialog {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  max-height: calc(100vh - 2 * var(--sp-6));
+  max-height: calc(100dvh - 2 * var(--sp-6));
+  overflow-y: auto;
+  border-radius: var(--r-xl);
+  background: var(--surface);
+  box-shadow: var(--shadow-lg);
+  animation: pop 0.18s ease;
+}
+.dialog--sm { max-width: 420px; }
+.dialog--lg { max-width: 680px; }
+@keyframes pop {
+  from { transform: scale(0.94); opacity: 0; }
+  to   { transform: none; opacity: 1; }
+}
+
+/* Lernkarte: farbiger Titel, Inhalt, optional Weiter-Knopf */
+.bigcard { display: flex; flex-direction: column; overflow: hidden; }
+.bigcard__counter { padding: var(--sp-5) var(--sp-6) var(--sp-2); font-size: var(--fs-xs); color: var(--text-muted); }
+.bigcard__title {
+  padding: var(--sp-5) calc(var(--sp-6) + 36px) var(--sp-5) var(--sp-6);
+  background: var(--accent);
+  color: var(--on-accent);
+  font-size: var(--fs-2xl);
+  font-weight: 800;
+  line-height: var(--lh-tight);
+}
+.bigcard__body { flex: 1 1 auto; overflow-y: auto; padding: var(--sp-6); }
+.bigcard__body--covered { display: flex; align-items: center; justify-content: center; min-height: 170px; cursor: pointer; }
+.bigcard__cover {
+  width: 100%;
+  padding: var(--sp-10) var(--sp-6);
+  border: 2px dashed var(--border-strong);
+  border-radius: var(--r-md);
+  color: var(--text-muted);
+  text-align: center;
+  transition: border-color var(--t-fast), color var(--t-fast), background var(--t-fast);
+}
+.bigcard__body--covered:hover .bigcard__cover { border-color: var(--accent); color: var(--text); background: var(--surface-sunken); }
+.bigcard__action { margin: 0 var(--sp-6) var(--sp-6); }
+
+/* ---------- 9. Fließtext in Karten ---------- */
+.prose { line-height: var(--lh-relaxed); }
+.prose > * + * { margin-top: var(--sp-3); }
+.prose ul, .prose ol, .card-list { padding-left: var(--sp-5); }
+.card-list { line-height: var(--lh-relaxed); }
+.prose li + li, .card-list li + li { margin-top: var(--sp-2); }
+.prose .muted { font-size: var(--fs-sm); }
+
+/* ---------- 10. Quiz ---------- */
+.quiz { padding: var(--sp-10) var(--sp-6) var(--sp-6); }
+.quiz__counter { margin-bottom: var(--sp-3); font-size: var(--fs-xs); color: var(--text-muted); }
+.quiz__lead { text-align: center; font-size: var(--fs-sm); color: var(--text-muted); }
+.quiz__prompt {
+  min-height: 2.4rem;
+  margin: var(--sp-2) 0 var(--sp-6);
+  font-size: var(--fs-2xl);
+  font-weight: 700;
+  line-height: 1.35;
+  text-align: center;
+}
+.quiz__options { display: flex; flex-direction: column; gap: var(--sp-2); }
+.quiz__opt {
+  padding: var(--sp-3) var(--sp-4);
+  border: 2px solid var(--accent);
+  border-radius: var(--r-md);
+  background: transparent;
+  color: var(--text);
+  font-weight: 600;
+  transition: background var(--t-fast), transform var(--t-fast);
+}
+.quiz__opt:hover { background: color-mix(in srgb, var(--accent) 18%, transparent); transform: translateY(-2px); }
+.quiz__opt--locked { cursor: default; transform: none; }
+.quiz__opt--locked:hover { background: transparent; transform: none; }
+.quiz__opt--correct,
+.quiz__opt--correct:hover { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.quiz__opt--wrong { border-color: var(--danger); color: var(--danger-text); }
+.quiz__feedback { min-height: 1.4em; margin-top: var(--sp-4); font-size: var(--fs-sm); line-height: var(--lh-normal); }
+.quiz__feedback--ok { color: var(--success); }
+.quiz__feedback--no { color: var(--danger-text); }
+.quiz__next { margin-top: var(--sp-4); }
+.quiz__result { text-align: center; }
+
+/* Zähler links, Hinweis-Knopf rechts (Platz für das Schließen-Kreuz bleibt frei) */
+.quiz__bar { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3); min-height: 36px; margin: calc(var(--sp-3) - var(--sp-10)) 44px var(--sp-4) 0; }   /* gleiche Höhe wie das ✕ (top: --sp-3, 36 px) */
+.quiz__bar .quiz__counter { margin-bottom: 0; }
+.quiz__hint-btn { border-color: color-mix(in srgb, var(--yellow) 45%, transparent); color: var(--yellow); }
+.quiz__hint-btn:hover,
+.quiz__hint-btn[aria-expanded="true"] { background: color-mix(in srgb, var(--yellow) 16%, transparent); border-color: var(--yellow); color: var(--yellow); }
+
+/* ---------- 10b. Hinweis-Panel neben dem Quiz ---------- */
+/* <div class="quiz-layout"> umschließt Quiz-Dialog und <aside class="dialog hint-panel">. */
+.quiz-layout {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: var(--sp-4);
+  width: 100%;
+  max-width: 860px;
+}
+.quiz-layout > .quiz { flex: 0 1 480px; }
+.hint-panel {
+  flex: 0 1 340px;
+  max-width: 340px;
+  padding: var(--sp-5);
+  border-top: 4px solid var(--yellow);
+  animation: hint-in 0.22s ease;
+}
+@keyframes hint-in { from { opacity: 0; transform: translateX(-12px); } to { opacity: 1; transform: none; } }
+.hint-panel__head { display: flex; align-items: center; gap: var(--sp-3); margin: 0 var(--sp-8) var(--sp-3) 0; }
+.hint-panel__hamster { flex: none; width: 56px; height: 56px; }
+.hint-panel__hamster .hamster-stage { width: 56px; height: 56px; }
+.hint-panel__eyebrow { color: var(--yellow); }
+.hint-panel__title { margin-top: 2px; font-size: var(--fs-lg); }
+.hint-panel__show {
+  font-size: 1.1rem;
+  padding: var(--sp-4);
+  border-radius: var(--r-md);
+  background: var(--surface-sunken);
+  color: var(--text-strong);
+  overflow-x: auto;
+}
+.hint-panel__caption { display: block; margin-bottom: var(--sp-3); color: var(--text-muted); font-size: var(--fs-sm); }
+.hint-panel__show .math-lines { gap: var(--sp-4); }
+.hint-panel__show .katex { white-space: nowrap; }   /* Formeln nicht mitten im Ausdruck umbrechen, lieber seitlich scrollen */
+.hint-panel__foot { margin-top: var(--sp-3); color: var(--text-muted); font-size: var(--fs-sm); }
+
+/* Schmal: Panel schiebt sich von unten über das Quiz (wie ein Zettel) */
+@media (max-width: 820px) {
+  .quiz-layout > .quiz { flex-basis: 100%; max-width: 480px; }
+  .hint-panel {
+    position: fixed;
+    left: var(--sp-3);
+    right: var(--sp-3);
+    bottom: var(--sp-3);
+    max-width: 480px;
+    max-height: 55dvh;
+    margin: 0 auto;
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.6);
+    animation-name: hint-up;
+  }
+  @keyframes hint-up { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+  /* Solange der Hinweis offen ist, lässt sich das Quiz über dem Zettel hochschieben */
+  .overlay:has(.hint-panel:not([hidden])) { align-items: flex-start; overflow-y: auto; padding-bottom: 60dvh; }
+  .overlay:has(.hint-panel:not([hidden])) .quiz { max-height: none; }
+}
+.quiz__score { margin: var(--sp-2) 0 var(--sp-6); font-size: var(--fs-2xl); font-weight: 800; }
+
+/* ---------- 11. Tooltips ---------- */
+/* <span class="tip" data-tip="Erklärung">Begriff</span> */
+.tip {
+  position: relative;
+  cursor: help;
+  text-decoration: underline dotted var(--border-strong);
+  text-underline-offset: 3px;
+}
+.tip::after {
+  content: attr(data-tip);
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 8px);
+  z-index: var(--z-tooltip);
+  width: max-content;
+  max-width: 220px;
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-sm);
+  background: var(--bg);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+  color: var(--text);
+  font-size: var(--fs-xs);
+  font-weight: 400;
+  line-height: 1.4;
+  text-align: left;
+  text-transform: none;
+  letter-spacing: 0;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(4px);
+  transition: opacity var(--t-fast), transform var(--t-fast);
+}
+.tip:hover::after, .tip:focus-visible::after { opacity: 1; transform: none; }
+.tip--end::after { left: auto; right: 0; }
+
+/* ---------- 12. Mathe (KaTeX) ---------- */
+/* KaTeX setzt 1.21em – zur Segoe-UI-Textgröße passt 1.1em besser. */
+.katex { font-size: 1.1em; }
+
+/* Hochzahlen und Indizes: KaTeX setzt sie auf 70 %. Auf dunklem Grund ist das zu klein und zu dünn.
+   80 % bleibt gut lesbar, ohne dass Abstände kippen. (Gilt nur für hoch-/tiefgestellte Teile.) */
+.katex .msupsub .katex-sizing.reset-size6.size3 { font-size: 0.8em; }   /* Klassenname ab KaTeX 0.19: katex-sizing */
+/* Brüche im Exponenten (a^{2/3}) und der Wurzelexponent (∛): KaTeX setzt sie auf 50 % – kaum lesbar.
+   Gerade hier muss man genau hinschauen (2/3 oder 3/2?), deshalb deutlich größer. */
+.katex .msupsub .mfrac .katex-sizing.reset-size3.size1 { font-size: 0.9em; }
+.katex .katex-root .katex-sizing.reset-size6.size1 { font-size: 0.7em; }
+
+/* Formeln, die man lesen und vergleichen muss (Beispiele, Lernkarten, Antworten, Hinweise): eine Stufe größer */
+.math-lines,
+.math-size-lg { font-size: 1.1rem; }
+.katex-display { margin: 0; overflow-x: auto; overflow-y: hidden; padding: var(--sp-1) 0; }
+
+/* Große, zentrierte Formel (Display-Modus) */
+.math-block {
+  padding: var(--sp-5) var(--sp-4);
+  border-radius: var(--r-md);
+  background: var(--surface-sunken);
+  color: var(--text-strong);
+  font-size: 1.25rem;
+  text-align: center;
+}
+.math-block--text { font-size: var(--fs-lg); font-weight: 700; }
+
+/* Formeln untereinander, gleichmäßige Abstände statt <br> */
+.math-lines { display: flex; flex-direction: column; gap: var(--sp-5); list-style: none; padding: 0; }
+.math-lines > li { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--sp-1) var(--sp-3); }
+.math-lines__note { font-size: var(--fs-sm); color: var(--text-muted); }
+.math-lines__note--ok { color: var(--success); }
+.math-lines__note--no { color: var(--danger-text); }
+
+/* ---------- 13. Responsiv ---------- */
+@media (max-width: 900px) {
+  /* Seitenleiste schiebt sich über den Inhalt statt Platz zu reservieren */
+  .page--with-sidebar,
+  .page--with-sidebar:has(.sidebar--collapsed) { padding-right: var(--page-pad); }
+}
+@media (max-width: 600px) {
+  .page--hub { padding: var(--sp-6) var(--sp-4); justify-content: flex-start; }
+  .back { position: static; align-self: flex-start; margin-bottom: var(--sp-4); }
+  .choices { gap: var(--sp-4); }
+  .choice { padding: var(--sp-6) var(--sp-4); }
+  .quiz { padding: var(--sp-10) var(--sp-4) var(--sp-4); }
+  .bigcard__body { padding: var(--sp-4); }
+  .overlay { padding: var(--sp-3); }
+}
+
+/* ---------- 14. Bewegung reduzieren ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

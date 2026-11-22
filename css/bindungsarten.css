@@ -1,0 +1,78 @@
+/* =====================================================================
+   Bindungsarten – nur seitenspezifische Styles.
+   Gemeinsame Bausteine (Knöpfe, Dialoge, Quiz, Seitenleiste …): base.css
+   ===================================================================== */
+
+:root {
+  --ion:    var(--blue);
+  --anion:  var(--purple);
+  --atom:   var(--cyan);
+  --metall: var(--yellow);
+}
+
+/* ---------- Vergleichstabelle ---------- */
+.btable-wrap {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  padding-bottom: var(--sp-4);
+}
+.btable {
+  display: grid;
+  grid-template-columns: 11rem repeat(3, minmax(220px, 1fr));
+  gap: 6px;
+  min-width: 840px;
+  max-width: 1220px;
+  margin: 0 auto;
+}
+
+.bt-head {
+  padding: var(--sp-3) var(--sp-4);
+  border-radius: var(--r-md);
+  background: var(--accent);
+  color: var(--on-accent);
+  font-size: var(--fs-lg);
+  font-weight: 800;
+  text-align: center;
+}
+.bt-head--ion    { --accent: var(--ion); }
+.bt-head--atom   { --accent: var(--atom); }
+.bt-head--metall { --accent: var(--metall); }
+
+.bt-label {
+  display: flex;
+  align-items: center;
+  padding: var(--sp-4);
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.bt-cell {
+  padding: var(--sp-4);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  font-size: 0.95rem;
+  line-height: var(--lh-normal);
+}
+.bt-cell ul { padding-left: var(--sp-5); }
+.bt-cell li + li { margin-top: var(--sp-1); }
+
+.bt-cell--model { display: flex; flex-direction: column; align-items: center; gap: var(--sp-2); }
+.bt-cap { color: var(--text-muted); font-size: var(--fs-sm); text-align: center; }
+
+/* ---------- Teilchen-Modelle (SVG) ---------- */
+.model { width: 150px; height: 76px; }
+.model text {
+  fill: var(--on-accent);
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 700;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+.model .sym { font-size: 15px; }
+.model__ion circle     { fill: var(--ion); }
+.model__ion circle.neg { fill: var(--anion); }
+.model .atom           { fill: var(--atom); }
+.model .e              { fill: var(--text); }
+.model__metal circle   { fill: var(--metall); }
