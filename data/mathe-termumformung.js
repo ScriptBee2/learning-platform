@@ -306,6 +306,77 @@ var TERMUMFORMUNG = {
           ]
         }
       ]
+    },
+
+    // ================================================================ Formel umstellen
+    {
+      id: "formel-umstellen", title: "Formel umstellen", accent: "indigo",
+      rules: [
+        {
+          label: "Variable als Faktor", card: "3p = 3x \\;\\Rightarrow\\; x = p",
+          title: "Fall 1: Die Variable steht als Faktor in einem Produkt",
+          formula: "a \\cdot x = b \\;\\Rightarrow\\; x = \\frac{b}{a}",
+          condition: "für $a \\neq 0$",
+          inWords: "Steht die gesuchte Variable als Faktor in einem Produkt, teilst du beide Seiten durch alles, was außer der Variablen noch dabeisteht. Dann bleibt die Variable allein stehen.",
+          steps: [
+            "Alle Faktoren außer der gesuchten Variablen bestimmen – das ist der Teiler.",
+            "Beide Seiten durch diesen Teiler teilen.",
+            "Auf der Variablen-Seite kürzt sich alles bis auf die Variable weg.",
+            "Probe: Ergebnis zurück einsetzen."
+          ],
+          why: "Eine Gleichung bleibt gleich, wenn du auf beiden Seiten dasselbe tust (Äquivalenzumformung). Teilst du beide Seiten durch denselben Faktor, bleibt die Gleichung richtig – und die Variable wird freigestellt.",
+          examples: [
+            { tex: "3p = 3x \\quad | : 3 \\;\\Rightarrow\\; p = x", note: "beide Seiten durch 3 teilen" },
+            { tex: "3p = 3 \\cdot x \\cdot p \\cdot z \\cdot k \\quad | : 3pzk \\;\\Rightarrow\\; x = \\frac{3p}{3pzk} = \\frac{1}{zk}", note: "durch alles außer $x$ teilen, dann kürzen" },
+            { tex: "a = b \\cdot x \\quad | : b \\;\\Rightarrow\\; x = \\frac{a}{b}", note: "allgemeiner Fall, $b \\neq 0$" }
+          ],
+          mistakes: [
+            { wrong: "3x = 12 \\;\\Rightarrow\\; x = 12 - 3", right: "3x = 12 \\;\\Rightarrow\\; x = \\frac{12}{3} = 4", note: "Ein Faktor wird durch Teilen entfernt, nicht durch Minusrechnen." }
+          ]
+        },
+        {
+          label: "Variable im Nenner", card: "y = \\frac{a}{x} \\;\\Rightarrow\\; x = \\frac{a}{y}",
+          title: "Fall 2: Die Variable steht im Nenner",
+          formula: "y = \\frac{a}{x} \\;\\Rightarrow\\; x = \\frac{a}{y}",
+          condition: "für $x \\neq 0,\\; y \\neq 0$",
+          inWords: "Steht die Variable im Nenner, muss sie zuerst aus dem Nenner heraus. Dafür gibt es zwei Wege, die zum selben Ergebnis führen.",
+          steps: [
+            "Weg 1 – hochmultiplizieren: beide Seiten mit $x$ malnehmen, dann durch $y$ teilen.",
+            "Weg 2 – Kehrwert bilden: beide Seiten umdrehen, dann freistellen.",
+            "Beide Wege liefern dasselbe Ergebnis – nimm den, der dir leichter fällt."
+          ],
+          whyLabel: "Zwei Wege",
+          why: "Eine Variable im Nenner kann man nicht direkt freistellen. Entweder man holt sie durch Malnehmen nach oben (Weg 1), oder man dreht den ganzen Bruch um (Weg 2) – beim Kehrwert tauschen Zähler und Nenner die Plätze.",
+          examples: [
+            { tex: "\\text{Weg 1: } y = \\frac{a+1}{x} \\quad | \\cdot x \\;\\Rightarrow\\; y \\cdot x = a+1 \\quad | : y \\;\\Rightarrow\\; x = \\frac{a+1}{y}", note: "erst mit $x$ mal, dann durch $y$ teilen" },
+            { tex: "\\text{Weg 2: } y = \\frac{a+1}{x} \\;\\Rightarrow\\; \\frac{1}{y} = \\frac{x}{a+1} \\quad | \\cdot (a+1) \\;\\Rightarrow\\; x = \\frac{a+1}{y}", note: "Kehrwert bilden (beide Brüche stürzen), dann mit $(a+1)$ mal" }
+          ],
+          mistakes: [
+            { wrong: "y = \\frac{a}{x} \\;\\Rightarrow\\; x = a \\cdot y", right: "y = \\frac{a}{x} \\;\\Rightarrow\\; x = \\frac{a}{y}", note: "Beim Hochmultiplizieren wird durch $y$ geteilt, nicht mit $y$ malgenommen." }
+          ]
+        },
+        {
+          label: "Zwei oder mehr Terme", card: "p = 3x - kx \\;\\Rightarrow\\; x = \\frac{p}{3-k}",
+          title: "Fall 3: Die Variable steht in zwei oder mehr Termen",
+          formula: "p = ax - bx \\;\\Rightarrow\\; p = x(a-b) \\;\\Rightarrow\\; x = \\frac{p}{a-b}",
+          condition: "für $a - b \\neq 0$",
+          inWords: "Kommt die gesuchte Variable in mehreren Termen vor, musst du sie zuerst ausklammern. Dann steht sie nur noch einmal da und du kannst wie in Fall 1 durch die Klammer teilen.",
+          steps: [
+            "Alle Terme mit der gesuchten Variablen auf eine Seite bringen (falls nötig mit $+$ oder $-$).",
+            "Die Variable ausklammern.",
+            "Beide Seiten durch die Klammer teilen.",
+            "Probe: Ergebnis zurück einsetzen."
+          ],
+          why: "Solange die Variable mehrfach vorkommt, lässt sie sich nicht freistellen. Ausklammern bündelt alle Vorkommen zu einem einzigen Faktor – danach ist es wieder Fall 1.",
+          examples: [
+            { tex: "p = 3x - kx \\;\\Rightarrow\\; p = x(3 - k) \\quad | : (3-k) \\;\\Rightarrow\\; x = \\frac{p}{3-k}", note: "erst $x$ ausklammern, dann durch die Klammer teilen" },
+            { tex: "ax + c = bx \\;\\Rightarrow\\; c = bx - ax = x(b-a) \\;\\Rightarrow\\; x = \\frac{c}{b-a}", note: "zuerst alle $x$-Terme auf eine Seite bringen" }
+          ],
+          mistakes: [
+            { wrong: "p = 3x - kx \\;\\Rightarrow\\; x = \\frac{p}{3} - \\frac{p}{k}", right: "p = 3x - kx \\;\\Rightarrow\\; x = \\frac{p}{3-k}", note: "Erst ausklammern, dann teilen – nicht Term für Term einzeln teilen." }
+          ]
+        }
+      ]
     }
 
   ],
@@ -355,6 +426,15 @@ var TERMUMFORMUNG = {
         { label: "Gerade Potenz herausziehen", tex: "\\sqrt{48p^{18}} = 4p^9\\sqrt{3}" },
         { label: "Quotient aufteilen", tex: "\\sqrt{\\frac{a}{b}} = \\frac{\\sqrt{a}}{\\sqrt{b}}" },
         { label: "Rationalisieren", tex: "\\frac{1}{\\sqrt{3}} = \\frac{\\sqrt{3}}{3}" }
+      ]
+    },
+    {
+      front: "Formel umstellen", section: "formel-umstellen",
+      items: [
+        { label: "Fall 1: Variable als Faktor → teilen", tex: "a \\cdot x = b \\;\\Rightarrow\\; x = \\frac{b}{a}" },
+        { label: "Fall 2: Variable im Nenner → hochmultiplizieren", tex: "y = \\frac{a}{x} \\;\\Rightarrow\\; x = \\frac{a}{y}" },
+        { label: "Fall 2: Variable im Nenner → Kehrwert bilden", tex: "y = \\frac{a}{x} \\;\\Rightarrow\\; \\frac{1}{y} = \\frac{x}{a}" },
+        { label: "Fall 3: Mehrere Terme → ausklammern, dann teilen", tex: "p = ax - bx = x(a-b) \\;\\Rightarrow\\; x = \\frac{p}{a-b}" }
       ]
     }
   ]

@@ -42,6 +42,7 @@
             <option value="faktorisieren">Faktorisieren</option>
             <option value="bruchterme">Bruchterme</option>
             <option value="wurzeln-vereinfachen">Wurzeln vereinfachen</option>
+            <option value="formel-umstellen">Formel umstellen</option>
           </select>
           <div class="ueb-level" role="group" aria-label="Schwierigkeitsgrad">
             <button type="button" class="ueb-level__btn is-active" data-level="easy">Einfach</button>
@@ -127,8 +128,12 @@
         <p class="eyebrow ueb-type" id="uebType" hidden></p>
         <p class="quiz__prompt" id="uebPrompt" tabindex="-1"></p>
         <div class="ueb-tipp">
-          <button type="button" class="btn btn--sm quiz__hint-btn" id="uebTippBtn" aria-expanded="false">&#128161; Tipp</button>
+          <div class="ueb-tipp__btns">
+            <button type="button" class="btn btn--sm quiz__hint-btn" id="uebTippBtn" aria-expanded="false">&#128161; Tipp</button>
+            <button type="button" class="btn btn--sm quiz__hint-btn" id="uebResultBtn" aria-expanded="false">&#10003; Ergebnis</button>
+          </div>
           <p class="ueb-tipp__body" id="uebTippBody" hidden></p>
+          <div class="ueb-tipp__body ueb-tipp__body--result" id="uebResultBody" hidden></div>
         </div>
         <div class="ueb-actions">
           <button type="button" class="btn btn--block" id="uebSolutionBtn">Lösungsweg anzeigen</button>

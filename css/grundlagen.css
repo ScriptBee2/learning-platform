@@ -183,6 +183,7 @@ ol.formula-list .formula-list__label::before { content: counter(fl) ". "; color:
 
 /* ---------- Übungsaufgaben: Tipp ---------- */
 .ueb-tipp { margin-top: var(--sp-4); }
+.ueb-tipp__btns { display: flex; gap: var(--sp-2); flex-wrap: wrap; }
 .ueb-tipp__body {
   margin-top: var(--sp-2);
   padding: var(--sp-3) var(--sp-4);
@@ -192,6 +193,13 @@ ol.formula-list .formula-list__label::before { content: counter(fl) ". "; color:
   font-size: var(--fs-sm);
   color: var(--text);
   line-height: var(--lh-relaxed);
+}
+.ueb-tipp__body--result {
+  display: flex;
+  justify-content: center;
+  background: color-mix(in srgb, var(--green) 12%, var(--surface));
+  border-left-color: var(--green);
+  font-size: var(--fs-lg);
 }
 
 /* ---------- Übungsaufgaben: Button-Gruppe + Zurück ---------- */

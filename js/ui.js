@@ -24,8 +24,8 @@
     if (!window.Hamster) return null;
     return window.Hamster.tips({
       tips: tips,
-      greeting: "Hallo! Ich bin Prof. Pi, dein Lern-Hamster. Klick mich an, wenn du einen Tipp brauchst!",
-      texts: { greetingTitle: "Prof. Pi", tipTitle: "Prof. Pi:", open: "Tipp von Prof. Pi" },
+      greeting: "Hallo! Ich bin Dr. Hermann, dein Lern-Hamster. Klick mich an, wenn du einen Tipp brauchst!",
+      texts: { greetingTitle: "Dr. Hermann", tipTitle: "Dr. Hermann:", open: "Tipp von Dr. Hermann" },
       storageKey: "lernzentrum-begruesst"
     });
   }

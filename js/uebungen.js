@@ -15,6 +15,8 @@
   const prompt        = $("uebPrompt");
   const tippBtn       = $("uebTippBtn");
   const tippBody      = $("uebTippBody");
+  const resultBtn     = $("uebResultBtn");
+  const resultBody    = $("uebResultBody");
   const solutionBtn   = $("uebSolutionBtn");
   const nextBtn       = $("uebNext");
   const stage         = $("uebStage");
@@ -125,6 +127,11 @@
     tippBody.hidden = true;
     tippBtn.setAttribute("aria-expanded", "false");
 
+    resultBody.innerHTML = curItem.ergebnis ? MathTex.big(curItem.ergebnis) : "";
+    resultBody.hidden = true;
+    resultBtn.hidden = !curItem.ergebnis;
+    resultBtn.setAttribute("aria-expanded", "false");
+
     // Sections für Stepper aufbauen
     stepContent.innerHTML = curItem.solution.map(renderStepSection).join("");
     stepCount = curItem.solution.length;
@@ -204,6 +211,12 @@
     var open = tippBody.hidden;
     tippBody.hidden = !open;
     tippBtn.setAttribute("aria-expanded", String(open));
+  });
+
+  resultBtn.addEventListener("click", function () {
+    var open = resultBody.hidden;
+    resultBody.hidden = !open;
+    resultBtn.setAttribute("aria-expanded", String(open));
   });
 
   // ---------- Weiter / Fertig ----------
