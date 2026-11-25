@@ -122,6 +122,38 @@
     </div>
   </div>
 
+  <!-- Erklär-Player: Schritt-für-Schritt-Erklärungen (js/explainer.js, Inhalte in js/explain/) -->
+  <div class="overlay" id="explOverlay" hidden>
+    <div class="dialog expl-dialog accent-indigo" role="dialog" aria-modal="true" aria-labelledby="explTitle">
+      <button type="button" class="close" id="explClose" aria-label="Schließen">&times;</button>
+      <header class="expl-dialog__head">
+        <h2 class="expl-dialog__title" id="explTitle"></h2>
+        <span class="muted" id="explSubtitle"></span>
+      </header>
+      <div class="expl">
+        <div class="expl-stage">
+          <svg id="explStage" viewBox="0 0 600 340" role="img" aria-label="Animation zur Erklärung"></svg>
+        </div>
+        <div class="expl-card">
+          <div class="expl-card__head">
+            <div class="expl-narrator" id="explHamster"></div>
+            <div>
+              <span class="eyebrow expl-card__step" id="explStepNo"></span>
+              <h3 class="expl-card__title" id="explStepTitle"></h3>
+            </div>
+          </div>
+          <div class="expl-steps" id="explSteps" aria-live="polite"></div>
+          <div class="expl-nav">
+            <button type="button" class="btn" id="explPrev">&#8592; Zurück</button>
+            <div class="expl-dots" id="explDots" aria-hidden="true"></div>
+            <button type="button" class="btn" id="explAgain" title="Nochmal abspielen" aria-label="Nochmal abspielen">&#8635;</button>
+            <button type="button" class="btn btn--primary" id="explNext">Weiter &#8594;</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="../lib/katex/katex.min.js"></script>
   <script src="../lib/hamster/hamster.js"></script>
   <script src="../js/ui.js"></script>
@@ -130,5 +162,7 @@
   <script src="../data/uebungen-termumformung.js"></script>
   <script src="../js/termumformung.js"></script>
   <script src="../js/uebungen.js"></script>
+  <script src="../js/explainer.js"></script>
+  <script src="../js/explain/formel-umstellen.js"></script>
 </body>
 </html>

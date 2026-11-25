@@ -429,7 +429,7 @@ var TERMUMFORMUNG = {
       ]
     },
     {
-      front: "Formel umstellen", section: "formel-umstellen",
+      front: "Formel umstellen", section: "formel-umstellen", explainBtn: "formel-umstellen",
       items: [
         { label: "Fall 1: Variable als Faktor → teilen", tex: "a \\cdot x = b \\;\\Rightarrow\\; x = \\frac{b}{a}" },
         { label: "Fall 2: Variable im Nenner → hochmultiplizieren", tex: "y = \\frac{a}{x} \\;\\Rightarrow\\; x = \\frac{a}{y}" },

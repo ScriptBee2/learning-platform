@@ -121,7 +121,8 @@
             '<span class="formula-list__math">' + (it.tex ? MathTex.big(it.tex) : "<strong>" + it.text + "</strong>") + "</span>" +
           "</li>";
         }).join("") +
-      "</" + tag + ">";
+      "</" + tag + ">" +
+      (c.explainBtn ? '<button type="button" class="btn btn--primary btn--block" style="margin-top:var(--sp-4)" data-explain="' + c.explainBtn + '">&#9654; Schritt für Schritt ansehen</button>' : "");
   }
 
   function openCard(i) {
