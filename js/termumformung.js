@@ -1,5 +1,5 @@
-// Mathe-Termumformung: Regelkarten, Detail-Dialog, Lernkarten und Quiz.
-// Inhalte: data/mathe-termumformung.js (TERMUMFORMUNG), data/quiz-termumformung.js (QUIZ_TERMUMFORMUNG).
+// Mathe-Termumformung: Regelkarten, Detail-Dialog und Lernkarten.
+// Inhalte: data/mathe-termumformung.js (TERMUMFORMUNG). Übungen: js/uebungen.js.
 (function () {
   const $ = function (id) { return document.getElementById(id); };
   const SECTIONS = TERMUMFORMUNG.sections;
@@ -17,7 +17,6 @@
     el.innerHTML =
       '<header class="rule-section__head">' +
         '<h2 class="rule-section__title">' + sec.title + "</h2>" +
-        '<button type="button" class="btn btn--sm" data-topic="' + sec.id + '">Quiz</button>' +
       "</header>" +
       '<div class="rule-grid">' +
         sec.rules.map(function (r, ri) {
@@ -98,8 +97,6 @@
   main.addEventListener("click", function (e) {
     const card = e.target.closest(".rule-card");
     if (card) openDetail(Number(card.dataset.section), Number(card.dataset.rule));
-    const quiz = e.target.closest("[data-topic]");
-    if (quiz) startQuiz(quiz.dataset.topic);
   });
   detailClose.addEventListener("click", closeDetail);
   detailOverlay.addEventListener("click", function (e) { if (e.target === detailOverlay) closeDetail(); });
@@ -151,153 +148,10 @@
   cardClose.addEventListener("click", closeCard);
   cardOverlay.addEventListener("click", function (e) { if (e.target === cardOverlay) closeCard(); });
 
-  // ---------- Quiz ----------
-  const QUIZ_LEN = 10;
-  const quizOverlay = $("quizOverlay");
-  const quizBox = $("quizBox");
-  const quizCounter = $("quizCounter");
-  const quizStage = $("quizStage");
-  const quizLead = $("quizLead");
-  const quizPrompt = $("quizPrompt");
-  const quizOptions = $("quizOptions");
-  const quizFeedback = $("quizFeedback");
-  const quizNext = $("quizNext");
-  const quizResult = $("quizResult");
-  const quizScore = $("quizScore");
-
-  let quizSet = [], qIdx = 0, score = 0, answered = false, currentTopic = null;
-
-  // ---------- Hinweis-Panel ----------
-  const hintBtn = $("hintBtn");
-  const hintPanel = $("hintPanel");
-  const hintTitle = $("hintTitle");
-  const hintShow = $("hintShow");
-  const hintHamster = $("hintHamster");
-  let hintHam = null;
-
-  function openHint() {
-    const item = quizSet[qIdx];
-    if (!item || !item.hint) return;
-    hintTitle.innerHTML = MathTex.html(item.hint);
-    hintShow.innerHTML = (item.hintShow || []).map(function (t) { return "<li>" + MathTex.big(t) + "</li>"; }).join("");
-    hintPanel.hidden = false;
-    hintBtn.setAttribute("aria-expanded", "true");
-    if (window.Hamster && !hintHam) {
-      const stage = document.createElement("div");
-      hintHamster.appendChild(stage);
-      hintHam = Hamster.create(stage, { clip: "tipTalk" });
-      setTimeout(function () { if (hintHam) hintHam.setLoop(["idleCalm", "idleLook"]); }, 2400);
-    }
-  }
-  function closeHint() {
-    hintPanel.hidden = true;
-    hintBtn.setAttribute("aria-expanded", "false");
-    if (hintHam) { hintHam.destroy(); hintHam = null; }
-    hintHamster.innerHTML = "";
-  }
-  hintBtn.addEventListener("click", function () { if (hintPanel.hidden) openHint(); else closeHint(); });
-  $("hintClose").addEventListener("click", closeHint);
-
-  function shuffle(arr) {
-    const a = arr.slice();
-    for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      const t = a[i]; a[i] = a[j]; a[j] = t;
-    }
-    return a;
-  }
-
-  function updateCounter() {
-    quizCounter.textContent = "Frage " + (qIdx + 1) + " von " + quizSet.length + "  ·  " + score + " richtig";
-  }
-
-  function startQuiz(topic) {
-    currentTopic = topic || null;
-    const pool = currentTopic
-      ? QUIZ_TERMUMFORMUNG.filter(function (q) { return q.topic === currentTopic; })
-      : QUIZ_TERMUMFORMUNG;
-    quizSet = shuffle(pool).slice(0, Math.min(QUIZ_LEN, pool.length));
-    qIdx = 0; score = 0;
-    const sec = currentTopic && SECTION_BY_ID[currentTopic];
-    quizBox.style.setProperty("--accent", sec ? accentVar(sec.accent) : "var(--amber)");
-    quizLead.textContent = sec ? sec.title + ": Quiz" : "Gemischtes Quiz";
-    quizResult.hidden = true;
-    quizStage.hidden = false;
-    quizOverlay.hidden = false;
-    renderQuestion();
-  }
-
-  function renderQuestion() {
-    answered = false;
-    const item = quizSet[qIdx];
-    updateCounter();
-    closeHint();
-    hintBtn.hidden = !item.hint;
-    quizPrompt.innerHTML = MathTex.html(item.q, true);
-    quizFeedback.textContent = "";
-    quizFeedback.className = "quiz__feedback";
-    quizNext.hidden = true;
-    quizOptions.innerHTML = "";
-    shuffle(item.opts).forEach(function (opt) {
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "quiz__opt";
-      btn.dataset.value = opt;
-      btn.innerHTML = MathTex.html(opt, true);
-      btn.addEventListener("click", function () { answer(opt, btn, item); });
-      quizOptions.appendChild(btn);
-    });
-    quizOptions.querySelector(".quiz__opt").focus();
-  }
-
-  function answer(chosen, btn, item) {
-    if (answered) return;
-    answered = true;
-    quizOptions.querySelectorAll(".quiz__opt").forEach(function (o) {
-      o.classList.add("quiz__opt--locked");
-      if (o.dataset.value === item.a) o.classList.add("quiz__opt--correct");
-    });
-    if (chosen === item.a) {
-      score++;
-      quizFeedback.innerHTML = "Richtig! " + MathTex.html(item.note);
-      quizFeedback.classList.add("quiz__feedback--ok");
-    } else {
-      btn.classList.add("quiz__opt--wrong");
-      quizFeedback.innerHTML = "Richtig wäre " + MathTex.html(item.a) + ". " + MathTex.html(item.note);
-      quizFeedback.classList.add("quiz__feedback--no");
-    }
-    updateCounter();
-    quizNext.hidden = false;
-    quizNext.textContent = (qIdx + 1 < quizSet.length) ? "Weiter" : "Ergebnis";
-    quizNext.focus();
-  }
-
-  function nextQuestion() {
-    if (qIdx + 1 < quizSet.length) { qIdx++; renderQuestion(); return; }
-    closeHint();
-    hintBtn.hidden = true;
-    quizStage.hidden = true;
-    quizResult.hidden = false;
-    quizScore.textContent = score + " von " + quizSet.length + " richtig";
-    UI.showResult($("hamsterContainer"), score, quizSet.length);
-  }
-
-  function closeQuiz() { closeHint(); quizOverlay.hidden = true; }
-
-  $("quizBtn").addEventListener("click", function () { startQuiz(null); });
-  $("quizRestart").addEventListener("click", function () { startQuiz(currentTopic); });
-  quizNext.addEventListener("click", nextQuestion);
-  $("quizClose").addEventListener("click", closeQuiz);
-  quizOverlay.addEventListener("click", function (e) {
-    if (e.target === quizOverlay || e.target === $("quizLayout")) closeQuiz();
-  });
-
   document.addEventListener("keydown", function (e) {
     if (e.key !== "Escape") return;
     if (!detailOverlay.hidden) closeDetail();
     else if (!cardOverlay.hidden) closeCard();
-    else if (!hintPanel.hidden) closeHint();
-    else if (!quizOverlay.hidden) closeQuiz();
   });
 
   // ---------- Tipp-Hamster ----------

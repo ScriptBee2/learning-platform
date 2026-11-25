@@ -2525,6 +2525,438 @@ var UEBUNGEN_TERMUMFORMUNG = [
       { title: "x ausklammern und teilen",
         text: "<p>Links <b>x</b> ausklammern, dann durch die Klammer teilen:</p>",
         tex: "x(c - a) = ab \\;\\Rightarrow\\; x = \\frac{ab}{c - a}" }
+    ] },
+
+  // ================================================================ aus dem früheren Quiz übernommen
+  // ----- Ausklammern -----
+  { topic: "ausklammern", level: "medium", type: "Klammere aus",
+    q: "6x^2 + 4x",
+    note: "Welche Zahl passt in 6 und 4? Welche Variable steckt in beiden Termen?",
+    ergebnis: "2x(3x + 2)",
+    solution: [
+      { title: "Gemeinsamen Faktor erkennen",
+        text: "<p>In <b class='hl-b'>6</b> und <b class='hl-b'>4</b> steckt die <b>2</b>, in x² und x einmal <b>x</b>. Faktor: <b>2x</b>.</p>",
+        tex: "6x^2 + 4x = \\mathbf{2x} \\cdot 3x + \\mathbf{2x} \\cdot 2" },
+      { title: "Ausklammern",
+        text: "<p>Schreibe <b>2x</b> vor die Klammer:</p>",
+        tex: "= 2x(3x + 2)" }
+    ] },
+
+  { topic: "ausklammern", level: "medium", type: "Klammere aus",
+    q: "12a^2b - 8ab^2",
+    note: "Was passt in 12 und 8? Welche Variablen stecken in beiden Termen?",
+    ergebnis: "4ab(3a - 2b)",
+    solution: [
+      { title: "Zahl prüfen",
+        text: "<p>Was passt in <b class='hl-b'>12</b> und <b class='hl-b'>8</b>? Die <b>4</b> &nbsp;(12 = 4·3, 8 = 4·2).</p>" },
+      { title: "Variablen prüfen",
+        text: "<p><b>a</b> steckt in a² und a, <b>b</b> steckt in b und b² → gemeinsam <b>4ab</b>.</p>",
+        tex: "12a^2b - 8ab^2 = \\mathbf{4ab} \\cdot 3a - \\mathbf{4ab} \\cdot 2b" },
+      { title: "Ausklammern",
+        text: "<p>Schreibe <b>4ab</b> vor die Klammer:</p>",
+        tex: "= 4ab(3a - 2b)" }
+    ] },
+
+  { topic: "ausklammern", level: "medium", type: "Klammere aus",
+    q: "-x^2 + 3x",
+    note: "Das erste Vorzeichen ist negativ. Klammere −x aus und dreh die Vorzeichen.",
+    ergebnis: "-x(x - 3)",
+    solution: [
+      { title: "Gemeinsamer Faktor mit Vorzeichen",
+        text: "<p><b>x</b> steckt in beiden Termen. Erstes Vorzeichen negativ → klammere <b>−x</b> aus. Jedes Vorzeichen in der Klammer dreht sich um. &nbsp;<span class='hl-muted'>(−x)·(−3) = +3x ✓</span></p>",
+        tex: "-x^2 + 3x = (-x) \\cdot x + (-x) \\cdot (-3)" },
+      { title: "Ausklammern",
+        text: "<p>Mit <b>−x</b> vor der Klammer:</p>",
+        tex: "= -x(x - 3)" }
+    ] },
+
+  { topic: "ausklammern", level: "hard", type: "Klammere aus",
+    q: "x(a+b) + 3(a+b)",
+    note: "Welcher Klammerausdruck steckt in beiden Termen?",
+    ergebnis: "(a+b)(x + 3)",
+    solution: [
+      { title: "Gemeinsamen Faktor erkennen",
+        text: "<p>In beiden Termen steht <b>(a+b)</b>. Das ist der gemeinsame Faktor, vor ihm stehen <b>x</b> und <b>3</b>.</p>",
+        tex: "x \\cdot (a+b) + 3 \\cdot (a+b)" },
+      { title: "Ausklammern",
+        text: "<p>Schreibe <b>(a+b)</b> vor die Klammer:</p>",
+        tex: "= (a+b)(x + 3)" }
+    ] },
+
+  { topic: "ausklammern", level: "hard", type: "Klammere aus",
+    q: "15x^3 - 10x^2 + 5x",
+    note: "Was passt in 15, 10 und 5? Welche x-Potenz steckt in allen drei Termen?",
+    ergebnis: "5x(3x^2 - 2x + 1)",
+    solution: [
+      { title: "Zahl prüfen",
+        text: "<p>Was passt in <b class='hl-b'>15</b>, <b class='hl-b'>10</b> und <b class='hl-b'>5</b>? Die <b>5</b>.</p>" },
+      { title: "Variable prüfen",
+        text: "<p>In allen drei Termen steckt mindestens <b>x</b>. Gemeinsam: <b>5x</b>.</p>",
+        tex: "15x^3 - 10x^2 + 5x = \\mathbf{5x} \\cdot 3x^2 - \\mathbf{5x} \\cdot 2x + \\mathbf{5x} \\cdot 1" },
+      { title: "Ausklammern",
+        text: "<p>Schreibe <b>5x</b> vor die Klammer — die <b>1</b> nicht vergessen!</p>",
+        tex: "= 5x(3x^2 - 2x + 1)" }
+    ] },
+
+  { topic: "ausklammern", level: "hard", type: "Klammere aus",
+    q: "2(x-1) + x(x-1)",
+    note: "Welcher Klammerausdruck kommt in beiden Summanden vor?",
+    ergebnis: "(x-1)(2 + x)",
+    solution: [
+      { title: "Gemeinsamen Faktor erkennen",
+        text: "<p>In beiden Summanden steht <b>(x−1)</b>. Vor der Klammer stehen <b>2</b> und <b>x</b>.</p>",
+        tex: "2 \\cdot (x-1) + x \\cdot (x-1)" },
+      { title: "Ausklammern",
+        text: "<p>Schreibe <b>(x−1)</b> vor die Klammer:</p>",
+        tex: "= (x-1)(2 + x)" }
+    ] },
+
+  // ----- Ausmultiplizieren -----
+  { topic: "ausmultiplizieren", level: "easy", type: "Multipliziere aus",
+    q: "5(2x - 3)",
+    note: "Die 5 mal 2x und die 5 mal 3. Das Minus bleibt.",
+    ergebnis: "10x - 15",
+    solution: [
+      { title: "Jeden Summanden mal 5",
+        text: "<p>Die <b>5</b> trifft <b class='hl-b'>2x</b> und <b class='hl-b'>3</b>.</p>",
+        tex: "5(2x-3) = 5 \\cdot 2x - 5 \\cdot 3" },
+      { title: "Ergebnis",
+        text: "<p>Ausrechnen:</p>",
+        tex: "= 10x - 15" }
+    ] },
+
+  { topic: "ausmultiplizieren", level: "medium", type: "Multipliziere aus",
+    q: "-(x^2 - 4x + 1)",
+    note: "Minus vor der Klammer dreht jedes Vorzeichen innen um.",
+    ergebnis: "-x^2 + 4x - 1",
+    solution: [
+      { title: "Minus vor der Klammer",
+        text: "<p>Das Minus ist ein <b>·(−1)</b>. Es dreht <em>jedes</em> Vorzeichen in der Klammer um.</p>",
+        tex: "-(x^2 - 4x + 1) = (-1) \\cdot x^2 + (-1) \\cdot (-4x) + (-1) \\cdot 1" },
+      { title: "Ergebnis",
+        text: "<p>Alle drei Vorzeichen gedreht:</p>",
+        tex: "= -x^2 + 4x - 1" }
+    ] },
+
+  { topic: "ausmultiplizieren", level: "medium", type: "Multipliziere aus",
+    q: "(x + 2)(x + 3)",
+    note: "Vier Produkte, danach die beiden x-Terme zusammenfassen.",
+    ergebnis: "x^2 + 5x + 6",
+    solution: [
+      { title: "Vier Produkte bilden",
+        text: "<p>Jeder Teil mal jeden: <b>x·x</b>, <b>x·3</b>, <b>2·x</b>, <b>2·3</b>.</p>",
+        tex: "(x+2)(x+3) = x^2 + 3x + 2x + 6" },
+      { title: "Gleiche Terme zusammenfassen",
+        text: "<p><b>+3x</b> und <b>+2x</b> ergeben <b>+5x</b>:</p>",
+        tex: "= x^2 + 5x + 6" }
+    ] },
+
+  { topic: "ausmultiplizieren", level: "medium", type: "Multipliziere aus",
+    q: "(x - 1)(x + 4)",
+    note: "Vier Produkte, dann zusammenfassen. Achte auf das Vorzeichen bei −1·x.",
+    ergebnis: "x^2 + 3x - 4",
+    solution: [
+      { title: "Vier Produkte bilden",
+        text: "<p>Jeder Teil mal jeden: <b>x·x</b>, <b>x·4</b>, <b>−1·x</b>, <b>−1·4</b>.</p>",
+        tex: "(x-1)(x+4) = x^2 + 4x - x - 4" },
+      { title: "Gleiche Terme zusammenfassen",
+        text: "<p><b>+4x</b> und <b>−x</b> ergeben <b>+3x</b>:</p>",
+        tex: "= x^2 + 3x - 4" }
+    ] },
+
+  { topic: "ausmultiplizieren", level: "hard", type: "Multipliziere aus",
+    q: "(x + 4)(x - 4)",
+    note: "Dritte binomische Formel: $(a+b)(a-b) = a^2 - b^2$. Hier ist $a = x$ und $b = 4$.",
+    ergebnis: "x^2 - 16",
+    solution: [
+      { title: "Formel ansetzen",
+        text: "<p>Summe mal Differenz mit gleichen Teilen → 3. binomische Formel. <b>a = x</b>, <b>b = 4</b>. Der mittlere Term fällt weg.</p>",
+        tex: "(x+4)(x-4) = x^2 - 4^2" },
+      { title: "Ergebnis",
+        text: "<p><b>4² = 16</b>:</p>",
+        tex: "= x^2 - 16" }
+    ] },
+
+  { topic: "ausmultiplizieren", level: "hard", type: "Multipliziere aus",
+    q: "(3x + 2)^2",
+    note: "Erste binomische Formel: $(a+b)^2 = a^2 + 2ab + b^2$. Hier ist $a = 3x$ und $b = 2$.",
+    ergebnis: "9x^2 + 12x + 4",
+    solution: [
+      { title: "Formel ansetzen",
+        text: "<p>Erste binomische Formel mit <b>a = 3x</b> und <b>b = 2</b>:</p>",
+        tex: "(3x+2)^2 = (3x)^2 + 2 \\cdot 3x \\cdot 2 + 2^2" },
+      { title: "Jeden Teil ausrechnen",
+        text: "<p><b>(3x)² = 9x²</b>, &nbsp; <b>2·3x·2 = 12x</b>, &nbsp; <b>2² = 4</b>.</p>",
+        tex: "= 9x^2 + 12x + 4" }
+    ] },
+
+  // ----- Faktorisieren -----
+  { topic: "faktorisieren", level: "easy", type: "Faktorisiere",
+    q: "x^2 - 16",
+    note: "Zwei Quadrate mit Minus dazwischen. Was ist $\\sqrt{16}$?",
+    ergebnis: "(x + 4)(x - 4)",
+    solution: [
+      { title: "Muster erkennen",
+        text: "<p>$a^2 - b^2$ mit $a = x$ und $b = 4$, denn $16 = 4^2$.</p>",
+        tex: "x^2 - 16 = x^2 - 4^2" },
+      { title: "3. binomische Formel rückwärts",
+        text: "<p>$a^2 - b^2 = (a+b)(a-b)$:</p>",
+        tex: "= (x + 4)(x - 4)" }
+    ] },
+
+  { topic: "faktorisieren", level: "medium", type: "Faktorisiere",
+    q: "9a^2 - 6a + 1",
+    note: "Drei Glieder, erstes und letztes sind Quadrate. Denk an $(a-b)^2$.",
+    ergebnis: "(3a - 1)^2",
+    solution: [
+      { title: "Quadrate finden",
+        text: "<p>$9a^2 = (3a)^2$ und $1 = 1^2$. Also $a = 3a$ und $b = 1$.</p>" },
+      { title: "Mittelterm prüfen",
+        text: "<p>Passt $-2ab$? &nbsp;<span class='hl-muted'>$-2 \\cdot 3a \\cdot 1 = -6a$ ✓</span></p>",
+        tex: "9a^2 - 6a + 1 = (3a)^2 - 2 \\cdot 3a \\cdot 1 + 1^2" },
+      { title: "2. binomische Formel rückwärts",
+        text: "<p>$a^2 - 2ab + b^2 = (a-b)^2$:</p>",
+        tex: "= (3a - 1)^2" }
+    ] },
+
+  { topic: "faktorisieren", level: "hard", type: "Faktorisiere",
+    q: "2x^3 - 8x",
+    note: "Erst den gemeinsamen Faktor ausklammern. Was bleibt dann in der Klammer stehen?",
+    ergebnis: "2x(x + 2)(x - 2)",
+    solution: [
+      { title: "Gemeinsamen Faktor ausklammern",
+        text: "<p>In beiden Termen steckt <b>2x</b>:</p>",
+        tex: "2x^3 - 8x = 2x(x^2 - 4)" },
+      { title: "Rest als 3. binomische Formel",
+        text: "<p>In der Klammer steht $x^2 - 4 = x^2 - 2^2$:</p>",
+        tex: "= 2x(x^2 - 2^2)" },
+      { title: "Vollständig faktorisiert",
+        text: "<p>$a^2 - b^2 = (a+b)(a-b)$:</p>",
+        tex: "= 2x(x + 2)(x - 2)" }
+    ] },
+
+  { topic: "faktorisieren", level: "hard", type: "Faktorisiere",
+    q: "x^2 + 9",
+    note: "Vorsicht: Hier steht ein <b>Plus</b>. Prüfe, ob die 3. binomische Formel $a^2 - b^2$ greift.",
+    ergebnis: "x^2 + 9 \\ \\text{(nicht faktorisierbar)}",
+    solution: [
+      { title: "Muster prüfen",
+        text: "<p>Die 3. binomische Formel braucht ein <b>Minus</b>. Hier steht $x^2 + 9 = x^2 + 3^2$ mit einem Plus.</p>" },
+      { title: "Summe zweier Quadrate",
+        text: "<p>Eine <b>Summe</b> zweier Quadrate lässt sich im Reellen <b>nicht</b> faktorisieren.</p>" },
+      { title: "Ergebnis",
+        text: "<p>Der Term bleibt, wie er ist:</p>",
+        tex: "x^2 + 9 \\quad \\text{(nicht faktorisierbar)}" }
+    ] },
+
+  { topic: "faktorisieren", level: "hard", type: "Faktorisiere",
+    q: "4m^4 - 1",
+    note: "Zwei Quadrate, Minus dazwischen: $4m^4 = (2m^2)^2$ und $1 = 1^2$.",
+    ergebnis: "(2m^2 + 1)(2m^2 - 1)",
+    solution: [
+      { title: "Muster erkennen",
+        text: "<p>$a^2 - b^2$ mit $a = 2m^2$ (denn $4m^4 = (2m^2)^2$) und $b = 1$.</p>",
+        tex: "4m^4 - 1 = (2m^2)^2 - 1^2" },
+      { title: "3. binomische Formel rückwärts",
+        text: "<p>$a^2 - b^2 = (a+b)(a-b)$. &nbsp;<span class='hl-muted'>$2m^2 + 1$ ist eine Summe und bleibt stehen.</span></p>",
+        tex: "= (2m^2 + 1)(2m^2 - 1)" }
+    ] },
+
+  // ----- Bruchterme -----
+  { topic: "bruchterme", level: "easy", type: "Kürze",
+    q: "\\frac{x^2 + x}{x}",
+    note: "Klammere im Zähler x aus, dann steht der Faktor x oben und unten.",
+    ergebnis: "x + 1 \\quad (x \\neq 0)",
+    solution: [
+      { title: "Zähler ausklammern",
+        text: "<p>Im Zähler steckt in beiden Summanden ein <b>x</b>:</p>",
+        tex: "\\frac{x^2 + x}{x} = \\frac{x \\cdot (x + 1)}{x}" },
+      { title: "Faktor x kürzen",
+        text: "<p>Der Faktor <b>x</b> steht oben und unten → kürzen (nur Faktoren, keine Summanden!).</p>" },
+      { title: "Ergebnis",
+        text: "<p>Nenner $\\neq 0$, also <b>$x \\neq 0$</b>.</p>",
+        tex: "= x + 1 \\quad (x \\neq 0)" }
+    ] },
+
+  { topic: "bruchterme", level: "medium", type: "Kürze",
+    q: "\\frac{x^2 - 4}{x - 2}",
+    note: "x² − 4 ist eine binomische Formel: a² − b² = (a + b)(a − b).",
+    ergebnis: "x + 2 \\quad (x \\neq 2)",
+    solution: [
+      { title: "Zähler mit 3. binomischer Formel",
+        text: "<p>$x^2 - 4 = (x - 2)(x + 2)$:</p>",
+        tex: "\\frac{x^2 - 4}{x - 2} = \\frac{(x - 2)(x + 2)}{x - 2}" },
+      { title: "Klammer (x−2) kürzen",
+        text: "<p>Die Klammer <b>(x − 2)</b> steht oben und unten → kürzen.</p>" },
+      { title: "Ergebnis",
+        text: "<p>Nenner $(x - 2) \\neq 0$, also <b>$x \\neq 2$</b>.</p>",
+        tex: "= x + 2 \\quad (x \\neq 2)" }
+    ] },
+
+  { topic: "bruchterme", level: "medium", type: "Bestimme die Definitionsmenge",
+    q: "\\frac{x + 1}{x^2 - 4}",
+    note: "x² − 4 = 0 hat zwei Lösungen. Denke an die binomische Formel.",
+    ergebnis: "D = \\mathbb{R} \\setminus \\{-2,\\ 2\\}",
+    solution: [
+      { title: "Nenner = 0 setzen",
+        text: "<p>$x^2 - 4 = (x - 2)(x + 2)$. Ein Produkt ist 0, wenn ein Faktor 0 ist:</p>",
+        tex: "(x - 2)(x + 2) = 0" },
+      { title: "Beide Lösungen finden",
+        text: "<p>$x = 2$ &nbsp;oder&nbsp; $x = -2$.</p>",
+        tex: "x = 2 \\quad \\text{oder} \\quad x = -2" },
+      { title: "Ergebnis",
+        text: "<p>Beide Werte sind verboten:</p>",
+        tex: "D = \\mathbb{R} \\setminus \\{-2,\\ 2\\}" }
+    ] },
+
+  { topic: "bruchterme", level: "medium", type: "Kürze",
+    q: "\\frac{x + 2}{x}",
+    note: "Vorsicht: x + 2 ist eine Summe, kein Produkt. Lässt sich das kürzen?",
+    ergebnis: "\\frac{x + 2}{x} \\ \\text{(nicht kürzbar)} \\quad (x \\neq 0)",
+    solution: [
+      { title: "Kürzen heißt: Faktoren streichen",
+        text: "<p>Kürzen darfst du nur <b>gemeinsame Faktoren</b> — <span class='hl-b'>nie einzelne Summanden</span>.</p>" },
+      { title: "Zähler anschauen",
+        text: "<p>Oben steht die <b>Summe</b> $x + 2$. Das x dort ist <em>kein</em> Faktor des ganzen Zählers. Falsch wäre, das x unten gegen das x in $x+2$ zu streichen!</p>" },
+      { title: "Ergebnis",
+        text: "<p>Kein gemeinsamer Faktor. Der Term bleibt, wie er ist:</p>",
+        tex: "\\frac{x + 2}{x} \\ \\text{(nicht kürzbar)} \\quad (x \\neq 0)" }
+    ] },
+
+  // ----- Wurzeln vereinfachen -----
+  { topic: "wurzeln-vereinfachen", level: "easy", type: "Vereinfache",
+    q: "\\sqrt{48}",
+    note: "Welche größte Quadratzahl steckt in 48? Denk an 4, 9, 16, 25...",
+    ergebnis: "4\\sqrt{3}",
+    solution: [
+      { title: "Quadratzahl heraussuchen",
+        text: "<p>Zerlege <b>48</b> in eine <b>Quadratzahl</b> mal einen Rest: $48 = 16 \\cdot 3$.</p>",
+        tex: "\\sqrt{48} = \\sqrt{\\mathbf{16} \\cdot 3}" },
+      { title: "Wurzel aufteilen und ziehen",
+        text: "<p>$\\sqrt{a \\cdot b} = \\sqrt{a} \\cdot \\sqrt{b}$. Aus <b>16</b> wird <b>4</b>, die <b>3</b> bleibt unter der Wurzel.</p>",
+        tex: "= \\sqrt{16} \\cdot \\sqrt{3} = 4\\sqrt{3}" }
+    ] },
+
+  { topic: "wurzeln-vereinfachen", level: "medium", type: "Vereinfache",
+    q: "\\sqrt{x^5}",
+    note: "Ungerade Potenz: eine Stufe bleibt unter der Wurzel. $x^5 = x^4 \\cdot x$.",
+    ergebnis: "x^2\\sqrt{x}",
+    solution: [
+      { title: "Gerade Potenz abspalten",
+        text: "<p>$x^5 = x^4 \\cdot x$. Die gerade Potenz <b>$x^4$</b> lässt sich ziehen.</p>",
+        tex: "\\sqrt{x^5} = \\sqrt{x^4 \\cdot x}" },
+      { title: "Wurzel ziehen",
+        text: "<p>$\\sqrt{x^4} = x^2$, das <b>x</b> bleibt unter der Wurzel:</p>",
+        tex: "= x^2\\sqrt{x}" }
+    ] },
+
+  { topic: "wurzeln-vereinfachen", level: "medium", type: "Vereinfache",
+    q: "\\sqrt{75p^{12}}",
+    note: "Zahl und Potenz getrennt vereinfachen. $75 = 25 \\cdot 3$.",
+    ergebnis: "5p^6\\sqrt{3}",
+    solution: [
+      { title: "Zahl und Potenz zerlegen",
+        text: "<p>$75 = 25 \\cdot 3$ (25 ist ein Quadrat) und $p^{12}$ ist eine gerade Potenz.</p>",
+        tex: "\\sqrt{75p^{12}} = \\sqrt{25 \\cdot 3 \\cdot p^{12}}" },
+      { title: "Wurzeln ziehen",
+        text: "<p>$\\sqrt{25} = 5$ und $\\sqrt{p^{12}} = p^{6}$, die <b>3</b> bleibt unter der Wurzel:</p>",
+        tex: "= 5p^6\\sqrt{3}" }
+    ] },
+
+  { topic: "wurzeln-vereinfachen", level: "hard", type: "Rationalisiere",
+    q: "\\frac{1}{\\sqrt{3}}",
+    note: "Eine Wurzel im Nenner ist unschön. Erweitere Zähler und Nenner mit $\\sqrt{3}$.",
+    ergebnis: "\\frac{\\sqrt{3}}{3}",
+    solution: [
+      { title: "Mit der Wurzel erweitern",
+        text: "<p>Multipliziere oben und unten mit <b>$\\sqrt{3}$</b> — das ändert den Wert nicht (mal 1).</p>",
+        tex: "\\frac{1}{\\sqrt{3}} = \\frac{1}{\\sqrt{3}} \\cdot \\frac{\\sqrt{3}}{\\sqrt{3}}" },
+      { title: "Nenner wird ganzzahlig",
+        text: "<p>Unten steht $\\sqrt{3} \\cdot \\sqrt{3} = 3$:</p>",
+        tex: "= \\frac{\\sqrt{3}}{3}" }
+    ] },
+
+  { topic: "wurzeln-vereinfachen", level: "hard", type: "Vereinfache",
+    q: "\\sqrt{a + b}",
+    note: "Gilt das Produktgesetz $\\sqrt{a \\cdot b} = \\sqrt{a}\\cdot\\sqrt{b}$ auch für Summen?",
+    ergebnis: "\\sqrt{a + b} \\ \\text{(lässt sich nicht aufteilen)}",
+    solution: [
+      { title: "Produktgesetz prüfen",
+        text: "<p>$\\sqrt{a \\cdot b} = \\sqrt{a} \\cdot \\sqrt{b}$ gilt nur für <b>Produkte</b> unter der Wurzel.</p>" },
+      { title: "Summe lässt sich nicht aufteilen",
+        text: "<p>Für Summen gilt das <span class='hl-b'>nicht</span>: $\\sqrt{a + b} \\neq \\sqrt{a} + \\sqrt{b}$. &nbsp;<span class='hl-muted'>(Gegenbeispiel: $\\sqrt{9+16}=5$, aber $3+4=7$.)</span></p>" },
+      { title: "Ergebnis",
+        text: "<p>Der Term bleibt, wie er ist:</p>",
+        tex: "\\sqrt{a + b} \\quad \\text{(nicht aufteilbar)}" }
+    ] },
+
+  // ----- Formel umstellen -----
+  { topic: "formel-umstellen", level: "easy", type: "Stelle nach x um",
+    q: "5x = 30",
+    note: "Der Faktor vor dem x wird durch Teilen entfernt.",
+    ergebnis: "x = 6",
+    solution: [
+      { title: "Durch den Faktor teilen",
+        text: "<p>Vor dem x steht <b>5</b>. Teile beide Seiten durch <b>5</b>:</p>",
+        tex: "5x = 30 \\quad | : 5" },
+      { title: "Ergebnis",
+        text: "<p>Ausrechnen:</p>",
+        tex: "x = \\frac{30}{5} = 6" }
+    ] },
+
+  { topic: "formel-umstellen", level: "easy", type: "Stelle nach x um",
+    q: "a = 4x",
+    note: "Durch die Zahl teilen, die als Faktor vor dem x steht.",
+    ergebnis: "x = \\frac{a}{4}",
+    solution: [
+      { title: "Durch den Faktor teilen",
+        text: "<p>Vor dem x steht <b>4</b>. Teile beide Seiten durch <b>4</b>:</p>",
+        tex: "a = 4x \\quad | : 4" },
+      { title: "Ergebnis",
+        text: "<p>x steht allein:</p>",
+        tex: "x = \\frac{a}{4}" }
+    ] },
+
+  { topic: "formel-umstellen", level: "medium", type: "Stelle nach x um",
+    q: "y = \\frac{a}{x}",
+    note: "x steht im Nenner: erst mit x hochmultiplizieren, dann durch y teilen.",
+    ergebnis: "x = \\frac{a}{y}",
+    solution: [
+      { title: "Mit x hochmultiplizieren",
+        text: "<p>x aus dem Nenner holen: beide Seiten <b>mal x</b>.</p>",
+        tex: "y = \\frac{a}{x} \\quad | \\cdot x \\;\\Rightarrow\\; yx = a" },
+      { title: "Durch y teilen",
+        text: "<p>Teile beide Seiten durch <b>y</b>:</p>",
+        tex: "x = \\frac{a}{y}" }
+    ] },
+
+  { topic: "formel-umstellen", level: "hard", type: "Stelle nach x um",
+    q: "p = 3x - kx",
+    note: "x kommt zweimal vor – zuerst ausklammern.",
+    ergebnis: "x = \\frac{p}{3 - k}",
+    solution: [
+      { title: "x ausklammern",
+        text: "<p>Rechts steckt x in beiden Termen – klammere <b>x</b> aus:</p>",
+        tex: "p = x(3 - k)" },
+      { title: "Durch die Klammer teilen",
+        text: "<p>Teile durch <b>(3−k)</b>:</p>",
+        tex: "x = \\frac{p}{3 - k}" }
+    ] },
+
+  { topic: "formel-umstellen", level: "hard", type: "Stelle nach x um",
+    q: "ax = bx + c",
+    note: "Erst alle x-Terme auf eine Seite, dann ausklammern.",
+    ergebnis: "x = \\frac{c}{a - b}",
+    solution: [
+      { title: "x-Terme auf eine Seite",
+        text: "<p>Bring <b>bx</b> nach links: beide Seiten <b>minus bx</b>.</p>",
+        tex: "ax = bx + c \\quad | - bx \\;\\Rightarrow\\; ax - bx = c" },
+      { title: "x ausklammern",
+        text: "<p>Links steht x zweimal – klammere <b>x</b> aus:</p>",
+        tex: "x(a - b) = c" },
+      { title: "Durch die Klammer teilen",
+        text: "<p>Teile durch <b>(a−b)</b>:</p>",
+        tex: "x = \\frac{c}{a - b}" }
     ] }
 
 ];

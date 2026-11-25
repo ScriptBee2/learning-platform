@@ -1,8 +1,12 @@
 // Übungsaufgaben-Modus: Aufgabe · Tipp · Lösungsweg – kein Quiz.
-// Daten: data/uebungen-termumformung.js (UEBUNGEN_TERMUMFORMUNG).
+// Daten: data/uebungen-termumformung.js (UEBUNGEN_TERMUMFORMUNG) bzw. data/uebungen-grundlagen.js (UEBUNGEN_GRUNDLAGEN).
 // solution-Schema: [{ title, text?, tex? }]
 (function () {
   const $ = function (id) { return document.getElementById(id); };
+
+  // Datenquelle je Seite: Termumformung oder Grundlagen.
+  const UEBUNGEN = window.UEBUNGEN_TERMUMFORMUNG || window.UEBUNGEN_GRUNDLAGEN || [];
+  const PAGE_DATA = window.TERMUMFORMUNG || window.GRUNDLAGEN || { sections: [] };
 
   const LEVEL_LABEL  = { easy: "Einfach", medium: "Mittel", hard: "Schwer" };
   const LEVEL_ACCENT = { easy: "var(--blue)", medium: "var(--amber)", hard: "var(--red)" };
@@ -62,8 +66,8 @@
   }
 
   function accentForSection(topicId) {
-    if (!topicId || !window.TERMUMFORMUNG) return "var(--blue)";
-    const sec = TERMUMFORMUNG.sections.find(function (s) { return s.id === topicId; });
+    if (!topicId || !PAGE_DATA.sections) return "var(--blue)";
+    const sec = PAGE_DATA.sections.find(function (s) { return s.id === topicId; });
     return sec ? "var(--" + sec.accent + ")" : "var(--blue)";
   }
 
@@ -81,7 +85,7 @@
 
   // ---------- Start ----------
   function startUebung() {
-    const pool = UEBUNGEN_TERMUMFORMUNG.filter(function (u) {
+    const pool = UEBUNGEN.filter(function (u) {
       const topicOk = !currentTopic || u.topic === currentTopic;
       return topicOk && u.level === currentLevel;
     });
@@ -96,7 +100,7 @@
     box.style.setProperty("--accent", accent);
 
     const topicLabel = currentTopic
-      ? (TERMUMFORMUNG.sections.find(function (s) { return s.id === currentTopic; }) || {}).title || currentTopic
+      ? (PAGE_DATA.sections.find(function (s) { return s.id === currentTopic; }) || {}).title || currentTopic
       : "Alle Themen";
     lead.textContent = topicLabel + " · " + LEVEL_LABEL[currentLevel];
 

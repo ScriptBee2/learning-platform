@@ -28,10 +28,6 @@
         <h2 class="panel__title">Lernkarten</h2>
         <div class="card-stack" id="cards"></div>
       </section>
-      <section class="panel accent-amber">
-        <h2 class="panel__title">Gemischtes Quiz</h2>
-        <button type="button" class="btn btn--primary btn--block" id="quizBtn">Quiz starten</button>
-      </section>
       <section class="panel accent-blue">
         <h2 class="panel__title">Übungsaufgaben</h2>
         <div class="ueb-filter">
@@ -70,48 +66,6 @@
       <button type="button" class="close close--on-accent" id="cardClose" aria-label="Schließen">&times;</button>
       <div class="bigcard__title" id="cardTitle"></div>
       <div class="bigcard__body prose" id="cardBody"></div>
-    </div>
-  </div>
-
-  <!-- Quiz-Dialog mit Hinweis-Panel daneben -->
-  <div class="overlay" id="quizOverlay" hidden>
-    <div class="quiz-layout" id="quizLayout">
-      <div class="dialog quiz" id="quizBox" role="dialog" aria-modal="true" aria-labelledby="quizLead">
-        <button type="button" class="close" id="quizClose" aria-label="Schließen">&times;</button>
-        <div class="quiz__bar">
-          <p class="quiz__counter" id="quizCounter"></p>
-          <button type="button" class="btn btn--sm quiz__hint-btn" id="hintBtn" aria-expanded="false" aria-controls="hintPanel">&#128161; Hinweis</button>
-        </div>
-        <div id="quizStage">
-          <p class="quiz__lead" id="quizLead"></p>
-          <p class="quiz__prompt" id="quizPrompt"></p>
-          <div class="quiz__options" id="quizOptions"></div>
-          <p class="quiz__feedback" id="quizFeedback" aria-live="polite"></p>
-          <button type="button" class="btn btn--primary btn--block quiz__next" id="quizNext" hidden></button>
-        </div>
-        <div class="quiz__result" id="quizResult" hidden>
-          <div id="hamsterContainer"></div>
-          <p class="quiz__score" id="quizScore"></p>
-          <button type="button" class="btn btn--primary btn--block" id="quizRestart">Nochmal</button>
-        </div>
-      </div>
-
-      <!-- Hinweis: erklärt den Lösungsweg, verrät aber nicht das Ergebnis -->
-      <aside class="dialog hint-panel" id="hintPanel" aria-labelledby="hintTitle" aria-live="polite" hidden>
-        <button type="button" class="close" id="hintClose" aria-label="Hinweis schließen">&times;</button>
-        <div class="hint-panel__head">
-          <div class="hint-panel__hamster" id="hintHamster"></div>
-          <div>
-            <span class="eyebrow hint-panel__eyebrow">Hinweis</span>
-            <h3 class="hint-panel__title" id="hintTitle"></h3>
-          </div>
-        </div>
-        <div class="hint-panel__show">
-          <span class="hint-panel__caption">So sieht das aus:</span>
-          <ul class="math-lines" id="hintShow"></ul>
-        </div>
-        <p class="hint-panel__foot">Jetzt setz deine Zahlen ein!</p>
-      </aside>
     </div>
   </div>
 
@@ -173,7 +127,6 @@
   <script src="../js/ui.js"></script>
   <script src="../js/math.js"></script>
   <script src="../data/mathe-termumformung.js"></script>
-  <script src="../data/quiz-termumformung.js"></script>
   <script src="../data/uebungen-termumformung.js"></script>
   <script src="../js/termumformung.js"></script>
   <script src="../js/uebungen.js"></script>
