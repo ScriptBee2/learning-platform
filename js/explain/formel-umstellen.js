@@ -25,8 +25,17 @@
     return D.txt("|  " + str, { x: 520, y: y, "text-anchor": "start", class: "note small",
       style: "font-size:18px", opacity: 0 });
   }
-  function arrow(D, y) {
-    return D.txt("↓", { x: CX, y: y, class: "note small", style: "font-size:24px", opacity: 0 });
+  // Abwärtspfeil, mittig auf yc gesetzt (so sitzt er gleichmäßig zwischen zwei Formelzeilen).
+  // Bindet ../assets/arrow-down.svg über das <svg-icon>-Element (js/svg-icon.js) ein.
+  function arrow(D, yc, len) {
+    len = len || 28;
+    var w = len * 32 / 42;            // Seitenverhältnis der (eng zugeschnittenen) Datei
+    var fo = D.el("foreignObject", { x: CX - w / 2, y: yc - len / 2, width: w, height: len, opacity: 0 });
+    var icon = document.createElement("svg-icon");
+    icon.setAttribute("class", "step-arrow");
+    icon.setAttribute("src", "../assets/arrow-down.svg");
+    fo.appendChild(icon);
+    return fo;
   }
   function frac(D, cx, y, num, den, size, accent) {
     size = size || 28;
@@ -138,125 +147,74 @@
   }
 
   // ================================================================ Szene 2 – Faktor wegteilen
-  async function scene2(D) {
-    var l1 = line(D, 70, "5 · x = 30", { size: 34 });
-    await D.fadeIn(l1, 420);
-    var o1 = op(D, 70, ": 5");
-    await D.fadeIn(o1, 350);
-    await D.wait(220);
+  // Mehrere Elemente gleichzeitig einblenden.
+  function fadeAll(D, els, ms) {
+    return Promise.all(els.map(function (e) { return D.fadeIn(e, ms || 400); }));
+  }
+  // Höhen-Schätzer: Textzeile bzw. Bruch (ragt über den Bruchstrich hinaus).
+  function hText(s) { return s * 1.15; }
+  function hFrac(s) { return s * 2.5; }
 
-    var a1 = arrow(D, 125);
-    await D.fadeIn(a1, 260);
+  // Generische Schrittfolge: verteilt die Zeilen gleichmäßig vertikal und setzt die Pfeile
+  // automatisch mittig in die Lücken – keine handgesetzten y-Werte mehr.
+  // lines[i] = { h: visuelle Höhe, op?: Badge-Text rechts, draw: function(yc){ return [el…]; } }
+  async function flow(D, lines) {
+    var GAP = 48;                                   // Lücke zwischen zwei Zeilen (enthält den Pfeil)
+    var total = 0;
+    lines.forEach(function (l, i) { total += l.h + (i ? GAP : 0); });
+    var y = Math.max(20, (340 - total) / 2);
+    var mids = lines.map(function (l) { var m = y + l.h / 2; y += l.h + GAP; return m; });
 
-    var l2 = line(D, 180, "x = 30 : 5", { size: 30 });
-    await D.fadeIn(l2, 400);
-    await D.wait(260);
-
-    var a2 = arrow(D, 235);
-    await D.fadeIn(a2, 260);
-
-    var l3 = line(D, 295, "x = 6", { role: "result", size: 40 });
-    await D.fadeIn(l3, 450);
-    D.sparkle(CX, 295, 30);
+    for (var i = 0; i < lines.length; i++) {
+      var els = lines[i].draw(mids[i]);
+      if (lines[i].op) els.push(op(D, mids[i], lines[i].op));
+      await fadeAll(D, els, 400);
+      if (i < lines.length - 1) {
+        await D.wait(110);
+        await D.fadeIn(arrow(D, mids[i] + lines[i].h / 2 + GAP / 2), 300);   // genau in der Lückenmitte
+        await D.wait(110);
+      }
+    }
+    D.sparkle(CX, mids[lines.length - 1], 28);
     D.cheer();
+  }
+
+  // ================================================================ Szene 2 – Faktor wegteilen
+  function scene2(D) {
+    return flow(D, [
+      { h: hText(34), op: ": 5", draw: function (yc) { return [line(D, yc, "5 · x = 30", { size: 34 })]; } },
+      { h: hText(30),            draw: function (yc) { return [line(D, yc, "x = 30 : 5", { size: 30 })]; } },
+      { h: hText(40),            draw: function (yc) { return [line(D, yc, "x = 6", { role: "result", size: 40 })]; } }
+    ]);
   }
 
   // ================================================================ Szene 3 – Variable im Nenner
-  async function scene3(D) {
-    var l1 = line(D, 70, "y =", { size: 30, x: CX - 52, anchor: "end" });
-    var f1 = frac(D, CX + 14, 70, "a", "x", 30);
-    await Promise.all([D.fadeIn(l1, 400), D.fadeIn(f1, 400)]);
-    var o1 = op(D, 70, "· x");
-    await D.fadeIn(o1, 350);
-    await D.wait(220);
-
-    var a1 = arrow(D, 130);
-    await D.fadeIn(a1, 240);
-
-    var l2 = line(D, 185, "y · x = a", { size: 30 });
-    await D.fadeIn(l2, 400);
-    var o2 = op(D, 185, ": y");
-    await D.fadeIn(o2, 350);
-    await D.wait(220);
-
-    var a2 = arrow(D, 240);
-    await D.fadeIn(a2, 240);
-
-    var l3 = line(D, 300, "x =", { role: "result", size: 34, x: CX - 52, anchor: "end" });
-    var f3 = frac(D, CX + 14, 300, "a", "y", 30, true);
-    await Promise.all([D.fadeIn(l3, 450), D.fadeIn(f3, 450)]);
-    D.sparkle(CX, 300, 28);
-    D.cheer();
+  function scene3(D) {
+    return flow(D, [
+      { h: hFrac(30), op: "· x", draw: function (yc) { return [line(D, yc, "y =", { size: 30, x: CX - 52, anchor: "end" }), frac(D, CX + 14, yc, "a", "x", 30)]; } },
+      { h: hText(30), op: ": y", draw: function (yc) { return [line(D, yc, "y · x = a", { size: 30 })]; } },
+      { h: hFrac(30),            draw: function (yc) { return [line(D, yc, "x =", { role: "result", size: 34, x: CX - 52, anchor: "end" }), frac(D, CX + 14, yc, "a", "y", 30, true)]; } }
+    ]);
   }
 
   // ================================================================ Szene 4 – x zweimal → ausklammern
-  async function scene4(D) {
-    var l1 = line(D, 55, "a · x = b · x + c", { size: 28 });
-    await D.fadeIn(l1, 420);
-    var o1 = op(D, 55, "− b · x");
-    await D.fadeIn(o1, 350);
-    await D.wait(200);
-
-    var a1 = arrow(D, 98);
-    await D.fadeIn(a1, 220);
-
-    var l2 = line(D, 140, "a · x − b · x = c", { size: 28 });
-    await D.fadeIn(l2, 400);
-    await D.wait(220);
-
-    var a2 = arrow(D, 182);
-    await D.fadeIn(a2, 220);
-
-    var l3 = line(D, 224, "x · (a − b) = c", { role: "accent", size: 30 });
-    await D.fadeIn(l3, 420);
-    var o3 = op(D, 224, ": (a − b)");
-    await D.fadeIn(o3, 350);
-    await D.wait(220);
-
-    var a3 = arrow(D, 266);
-    await D.fadeIn(a3, 220);
-
-    var l4 = line(D, 305, "x =", { role: "result", size: 30, x: CX - 64, anchor: "end" });
-    var f4 = frac(D, CX + 6, 305, "c", "a − b", 26, true);
-    await Promise.all([D.fadeIn(l4, 450), D.fadeIn(f4, 450)]);
-    D.sparkle(CX - 8, 305, 26);
-    D.cheer();
+  function scene4(D) {
+    return flow(D, [
+      { h: hText(28), op: "− b · x",   draw: function (yc) { return [line(D, yc, "a · x = b · x + c", { size: 28 })]; } },
+      { h: hText(28),                  draw: function (yc) { return [line(D, yc, "a · x − b · x = c", { size: 28 })]; } },
+      { h: hText(30), op: ": (a − b)", draw: function (yc) { return [line(D, yc, "x · (a − b) = c", { role: "accent", size: 30 })]; } },
+      { h: hFrac(26),                  draw: function (yc) { return [line(D, yc, "x =", { role: "result", size: 30, x: CX - 64, anchor: "end" }), frac(D, CX + 6, yc, "c", "a − b", 26, true)]; } }
+    ]);
   }
 
   // ================================================================ Szene 5 – Komplexbeispiel
-  async function scene5(D) {
-    var l1 = line(D, 44, "m =", { size: 24, x: CX - 58, anchor: "end" });
-    var f1 = frac(D, CX + 6, 44, "x", "x + n", 24);
-    await Promise.all([D.fadeIn(l1, 380), D.fadeIn(f1, 380)]);
-    var o1 = op(D, 44, "· (x + n)");
-    await D.fadeIn(o1, 320);
-    await D.wait(200);
-
-    var l2 = line(D, 100, "m · (x + n) = x", { size: 24 });
-    await D.fadeIn(l2, 380);
-    await D.wait(160);
-
-    var l3 = line(D, 152, "m·x + m·n = x", { size: 24 });
-    await D.fadeIn(l3, 380);
-    var o3 = op(D, 152, "− m·x");
-    await D.fadeIn(o3, 320);
-    await D.wait(200);
-
-    var l4 = line(D, 204, "m·n = x − m·x", { size: 24 });
-    await D.fadeIn(l4, 380);
-    await D.wait(160);
-
-    var l5 = line(D, 256, "m·n = x · (1 − m)", { role: "accent", size: 24 });
-    await D.fadeIn(l5, 400);
-    var o5 = op(D, 256, ": (1 − m)");
-    await D.fadeIn(o5, 320);
-    await D.wait(220);
-
-    var l6 = line(D, 314, "x =", { role: "result", size: 28, x: CX - 72, anchor: "end" });
-    var f6 = frac(D, CX, 314, "m · n", "1 − m", 24, true);
-    await Promise.all([D.fadeIn(l6, 450), D.fadeIn(f6, 450)]);
-    D.sparkle(CX - 10, 314, 28);
-    D.cheer();
+  function scene5(D) {
+    return flow(D, [
+      { h: hFrac(24), op: "· (x + n)", draw: function (yc) { return [line(D, yc, "m =", { size: 24, x: CX - 58, anchor: "end" }), frac(D, CX + 6, yc, "x", "x + n", 24)]; } },
+      { h: hText(25), op: "− m·x",     draw: function (yc) { return [line(D, yc, "m·x + m·n = x", { size: 25 })]; } },
+      { h: hText(25), op: ": (1 − m)", draw: function (yc) { return [line(D, yc, "m·n = x · (1 − m)", { role: "accent", size: 25 })]; } },
+      { h: hFrac(24),                  draw: function (yc) { return [line(D, yc, "x =", { role: "result", size: 28, x: CX - 72, anchor: "end" }), frac(D, CX, yc, "m · n", "1 − m", 24, true)]; } }
+    ]);
   }
 
   // ================================================================ Registrierung
